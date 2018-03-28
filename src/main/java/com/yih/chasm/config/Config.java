@@ -1,23 +1,15 @@
 package com.yih.chasm.config;
 
 
+import lombok.Data;
 
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import lombok.Data;
-import org.apache.commons.io.IOUtils;
 
 @Data
 public class Config {

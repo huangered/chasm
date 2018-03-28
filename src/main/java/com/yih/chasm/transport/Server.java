@@ -1,8 +1,9 @@
 package com.yih.chasm.transport;
 
 
-import com.yih.chasm.net.Decoder;
-import com.yih.chasm.net.DiscardServerHandler2;
+import com.yih.chasm.net.FrameMsgHandler;
+import com.yih.chasm.net.FrameDecoder;
+import com.yih.chasm.net.FrameEncoder;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -13,7 +14,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 
-public class Server {
+public class Server implements Runnable {
     public void start() {
         EventLoopGroup bossGroup = new NioEventLoopGroup(); // (1)
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -24,8 +25,9 @@ public class Server {
                     .childHandler(new ChannelInitializer<SocketChannel>() { // (4)
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast(new Decoder());
-                            ch.pipeline().addLast(new DiscardServerHandler2());
+                            ch.pipeline().addLast("server-frame-decoder" , new FrameDecoder());
+                            ch.pipeline().addLast(new FrameEncoder());
+                            ch.pipeline().addLast("server-handler" , new FrameMsgHandler());
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)          // (5)
@@ -44,5 +46,10 @@ public class Server {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
         }
+    }
+
+    @Override
+    public void run() {
+        start();
     }
 }
