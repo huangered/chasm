@@ -1,8 +1,10 @@
 package com.yih.chasm.net;
 
+import com.yih.chasm.transport.Frame;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
+import io.netty.util.ReferenceCountUtil;
 
 import java.util.List;
 
@@ -11,17 +13,11 @@ public class Decoder extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> results) {
 
-        try {
-            int i = msg.readableBytes();
-            for (int j = 0; j < i; j++) {
-                byte b = msg.readByte();
-                System.out.println((char) b + ":" + b);
 
-            }
-            ctx.write(msg);
-            ctx.flush();
-        } finally {
-            //ReferenceCountUtil.release(msg); // (2)
-        }
+        int version = msg.readInt();
+        int length = msg.readInt();
+        ByteBuf payload = msg.readBytes(length);
+        results.add(new Frame(version, length, payload));
+
     }
 }

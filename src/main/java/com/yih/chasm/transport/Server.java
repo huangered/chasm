@@ -1,6 +1,8 @@
-package com.yih.chasm.net;
+package com.yih.chasm.transport;
 
 
+import com.yih.chasm.net.Decoder;
+import com.yih.chasm.net.DiscardServerHandler2;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -22,6 +24,7 @@ public class Server {
                     .childHandler(new ChannelInitializer<SocketChannel>() { // (4)
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
+                            ch.pipeline().addLast(new Decoder());
                             ch.pipeline().addLast(new DiscardServerHandler2());
                         }
                     })
