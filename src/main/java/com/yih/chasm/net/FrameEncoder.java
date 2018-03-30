@@ -20,6 +20,6 @@ public class FrameEncoder extends MessageToMessageEncoder<Frame> {
         buf.writeInt(msg.getLength());
 
         out.add(buf);
-//        out.add(msg.getPayload());
+        out.add(msg.getPayload());
     }
 }

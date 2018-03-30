@@ -15,8 +15,8 @@ public class FrameDecoder extends ByteToMessageDecoder {
         int version = msg.readInt();
         int opcode = msg.readInt();
         int length = msg.readInt();
-//        ByteBuf payload = msg.readBytes(length);
-        results.add(new Frame(version, length, opcode, null));
+        ByteBuf payload = msg.readBytes(length);
+        results.add(new Frame(version, opcode, length, payload));
 
     }
 }

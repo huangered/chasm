@@ -3,6 +3,8 @@ package com.yih.chasm.transport;
 import com.yih.chasm.net.FrameMsgHandler;
 import com.yih.chasm.net.FrameDecoder;
 import com.yih.chasm.net.FrameEncoder;
+import com.yih.chasm.net.MessageOut;
+import com.yih.chasm.paxos.Commit;
 import com.yih.chasm.service.PaxosService;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -52,6 +54,6 @@ public class Client implements Runnable{
     }
 
     public void test(InetSocketAddress address){
-        PaxosService.instance().sendPrepare(null, address);
+        PaxosService.instance().sendPrepare(new MessageOut<Commit>(new Commit(123)), address);
     }
 }

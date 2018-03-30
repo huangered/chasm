@@ -15,7 +15,7 @@ public class StorageProxy {
         String id = "abcd";
         int target = 5;
 
-        Commit commit = new Commit();
+        Commit commit = new Commit(123);
 
 
         PrepareCallback summary = preparePaxos(commit, endpoints);

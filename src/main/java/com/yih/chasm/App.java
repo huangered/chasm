@@ -19,6 +19,7 @@ public class App {
         Thread server = new Thread(new Server());
         server.start();
         System.out.println("server");
+        Thread.sleep(1000);
         Client c1 = new Client();
         Thread client = new Thread(c1);
         client.start();

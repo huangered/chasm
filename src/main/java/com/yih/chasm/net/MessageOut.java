@@ -1,5 +1,6 @@
 package com.yih.chasm.net;
 
+import com.yih.chasm.service.PaxosService;
 import lombok.Data;
 
 import java.net.InetAddress;
@@ -13,11 +14,7 @@ public class MessageOut<T> {
         this.payload = payload;
     }
 
-    public static MessageOut create() {
-        return new MessageOut(null);
-    }
-
-    public static MessageOut read() {
+    public static <M> MessageOut<M> create(PaxosService.Verb verb, M payload) {
         return new MessageOut(null);
     }
 }

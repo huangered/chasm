@@ -1,6 +1,8 @@
 package com.yih.chasm.transport;
 
+import com.yih.chasm.service.PaxosService;
 import io.netty.buffer.ByteBuf;
+import lombok.extern.slf4j.Slf4j;
 
 public abstract class Message {
     public enum Direction {
@@ -28,9 +30,9 @@ public abstract class Message {
 
         public final int opcode;
         public final Direction direction;
-        public final Codec<?> codec;
+        public final Codec<? extends Message> codec;
 
-        Type(int opcode, Direction direction, Codec<?> codec) {
+        Type(int opcode, Direction direction, Codec<? extends Message> codec) {
             this.opcode = opcode;
             this.direction = direction;
             this.codec = codec;
@@ -55,7 +57,10 @@ public abstract class Message {
     }
 
 
+    @Slf4j
     public static class RequestMessage extends Message {
+
+        private PaxosService.Verb verb;
 
         static final RequestCodec codec = new RequestCodec();
 
@@ -63,6 +68,7 @@ public abstract class Message {
 
             @Override
             public RequestMessage decode(ByteBuf body, int version) {
+                log.info("{}", body.readInt());
                 return null;
             }
 
