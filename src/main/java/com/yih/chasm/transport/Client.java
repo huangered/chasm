@@ -1,9 +1,6 @@
 package com.yih.chasm.transport;
 
-import com.yih.chasm.net.FrameMsgHandler;
-import com.yih.chasm.net.FrameDecoder;
-import com.yih.chasm.net.FrameEncoder;
-import com.yih.chasm.net.MessageOut;
+import com.yih.chasm.net.*;
 import com.yih.chasm.paxos.Commit;
 import com.yih.chasm.service.PaxosService;
 import io.netty.bootstrap.Bootstrap;
@@ -15,6 +12,11 @@ import java.net.InetSocketAddress;
 public class Client implements Runnable{
     protected Bootstrap bootstrap;
     protected Channel channel;
+
+    private EndPoint ep;
+    public Client(EndPoint ep){
+        this.ep = ep;
+    }
 
     public void run(){
         connect();
@@ -33,7 +35,7 @@ public class Client implements Runnable{
         // Configure the pipeline factory.
         bootstrap.handler(new Initializer());
 
-        ChannelFuture future = bootstrap.connect(new InetSocketAddress("localhost", 12345));
+        ChannelFuture future = bootstrap.connect(new InetSocketAddress(ep.getIp(), ep.getPort()));
 
         // Wait until the connection attempt succeeds or fails.
         channel = future.awaitUninterruptibly().channel();
@@ -51,9 +53,5 @@ public class Client implements Runnable{
 
             pipeline.addLast("client-handler", new FrameMsgHandler());
         }
-    }
-
-    public void test(InetSocketAddress address){
-        PaxosService.instance().sendPrepare(new MessageOut<Commit>(new Commit(123)), address);
     }
 }

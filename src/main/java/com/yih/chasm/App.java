@@ -1,6 +1,8 @@
 package com.yih.chasm;
 
 import com.yih.chasm.config.Config;
+import com.yih.chasm.mbean.Test;
+import com.yih.chasm.service.StorageProxy;
 import com.yih.chasm.transport.Client;
 import com.yih.chasm.transport.Server;
 
@@ -11,25 +13,16 @@ import java.net.InetSocketAddress;
  */
 public class App {
     public static void main(String[] args) throws InterruptedException {
-        System.out.println(new App().getGreeting());
         Config c = new Config();
         c.read();
         System.out.println(c.getEndPoints());
+        System.out.println(c.getPort());
 
-        Thread server = new Thread(new Server());
-        server.start();
-        System.out.println("server");
-        Thread.sleep(1000);
-        Client c1 = new Client();
-        Thread client = new Thread(c1);
-        client.start();
-        System.out.println("ok");
+
+        StorageProxy sp = new StorageProxy(c);
+        sp.run();
         Thread.sleep(5000);
-        c1.test(InetSocketAddress.createUnresolved("localhost/127.0.0.1", 12345));
+        sp.beginPaxos();
 
-    }
-
-    public String getGreeting() {
-        return "Hello world.";
     }
 }

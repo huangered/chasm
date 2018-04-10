@@ -1,14 +1,14 @@
 package com.yih.chasm.net;
 
+import com.yih.chasm.io.IVersonSerializer;
 import com.yih.chasm.paxos.Commit;
+import com.yih.chasm.paxos.PrepareResponse;
 import com.yih.chasm.service.PaxosService;
 import com.yih.chasm.transport.Frame;
-import com.yih.chasm.transport.Message;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
 
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 /**
@@ -20,21 +20,37 @@ public class FrameMsgHandler extends SimpleChannelInboundHandler<Frame> { // (1)
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
 
         log.info("channel active " + ctx.name() + " " + ctx.channel().remoteAddress());
-        InetSocketAddress address = (InetSocketAddress)ctx.channel().remoteAddress();
-        PaxosService.instance().registerChannel(address.toString(), ctx.channel());
+        InetSocketAddress address = (InetSocketAddress) ctx.channel().remoteAddress();
+        PaxosService.instance().registerChannel(new EndPoint(address.getHostName(), address.getPort()), ctx.channel());
         super.channelActive(ctx);
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Frame msg) {
         log.info("{}", msg);
-//        log.info("{}", msg.getType().codec);
-//        Message body = msg.getType().codec.decode(msg.getPayload(), 1);
-     Commit commit =   Commit.serializer.deserialize(msg.getPayload());
-        log.info("{}", commit);
-        MessageIn<Commit> cm = new MessageIn<>(null, commit, PaxosService.Verb.PAXOS_PREPARE);
-        Thread t = new Thread(new MessageDeliverTask(cm));
-        t.start();
+        InetSocketAddress address = (InetSocketAddress) ctx.channel().remoteAddress();
+
+        if (msg.getDirect() == 2) { // back
+            log.info("hello world~~");
+            IVersonSerializer<?> serializer = PaxosService.callbackSerializers.get(msg.getVerb());
+            Object data = serializer.deserialize(msg.getPayload());
+
+            log.info("{}", data);
+            if (data instanceof PrepareResponse) {
+                PrepareResponse pr = (PrepareResponse)data;
+              IAsyncCallback callback =  PaxosService.instance().getCallback(Integer.toString( pr.getTraceId()));
+              MessageIn mi = new MessageIn(new EndPoint(address.getHostName(), address.getPort()), data, msg.getVerb());
+              callback.response(mi);
+            }
+        } else { // 1
+            IVersonSerializer<?> serializer = PaxosService.versionSerializers.get(msg.getVerb());
+
+            Object data = serializer.deserialize(msg.getPayload());
+            log.info("{}", data);
+            MessageIn cm = new MessageIn<>(new EndPoint(address.getHostName(), address.getPort()), data, msg.getVerb());
+            Thread t = new Thread(new MessageDeliverTask(cm));
+            t.start();
+        }
     }
 
     @Override

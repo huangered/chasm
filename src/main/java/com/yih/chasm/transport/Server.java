@@ -15,6 +15,13 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 
 public class Server implements Runnable {
+
+    private Integer port;
+
+    public Server(Integer port){
+        this.port = port;
+    }
+
     public void start() {
         EventLoopGroup bossGroup = new NioEventLoopGroup(); // (1)
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -34,7 +41,7 @@ public class Server implements Runnable {
                     .childOption(ChannelOption.SO_KEEPALIVE, true); // (6)
 
             // Bind and start to accept incoming connections.
-            ChannelFuture f = b.bind(12345).sync(); // (7)
+            ChannelFuture f = b.bind(port).sync(); // (7)
 
             // Wait until the server socket is closed.
             // In this example, this does not happen, but you can do that to gracefully

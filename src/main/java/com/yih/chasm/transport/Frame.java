@@ -1,5 +1,7 @@
 package com.yih.chasm.transport;
 
+import com.yih.chasm.service.PaxosService;
+import com.yih.chasm.service.Verb;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
@@ -8,13 +10,15 @@ public class Frame {
     private int version;
     private int length;
     private ByteBuf payload;
-    private Message.Type type;
+    private Verb verb;
 
-    public Frame(int version, int opcode, int length, ByteBuf payload) {
+    private int direct;
+
+    public Frame(int version, int verbCode, int length, ByteBuf payload, int direct) {
         this.version = version;
         this.length = length;
         this.payload = payload;
-
-        this.type = Message.Type.fromOpcode(opcode, Message.Direction.REQUEST);
+        this.verb = Verb.verbIdx[verbCode];
+        this.direct = direct;
     }
 }

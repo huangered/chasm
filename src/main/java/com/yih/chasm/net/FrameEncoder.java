@@ -6,9 +6,11 @@ import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+@Slf4j
 public class FrameEncoder extends MessageToMessageEncoder<Frame> {
 
     @Override
@@ -16,7 +18,9 @@ public class FrameEncoder extends MessageToMessageEncoder<Frame> {
         ByteBufAllocator allocator = new PooledByteBufAllocator(true);
         ByteBuf buf = allocator.buffer();
         buf.writeInt(msg.getVersion());
-        buf.writeInt(msg.getType().opcode);
+        buf.writeInt(msg.getVerb().id);
+        buf.writeInt(msg.getDirect());
+//        log.info("{}", msg.getVerb().id);
         buf.writeInt(msg.getLength());
 
         out.add(buf);

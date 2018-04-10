@@ -1,6 +1,7 @@
 package com.yih.chasm.config;
 
 
+import com.yih.chasm.net.EndPoint;
 import lombok.Data;
 
 import java.io.FileNotFoundException;
@@ -16,7 +17,9 @@ public class Config {
 
     private String propFileName;
 
-    private List<InetSocketAddress> endPoints = new ArrayList<>();
+    private List<EndPoint> endPoints = new ArrayList<>();
+
+    private Integer port;
 
     public Config() {
         propFileName = "config.properties";
@@ -46,8 +49,11 @@ public class Config {
             for (String ep : endpoints) {
                 String host = ep.split(":")[0];
                 String port = ep.split(":")[1];
-                endPoints.add(new InetSocketAddress(host, Integer.parseInt(port)));
+                endPoints.add(new EndPoint(host, Integer.parseInt(port)));
             }
+
+           String port  = prop.getProperty("port");
+            this.port = Integer.parseInt(port);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

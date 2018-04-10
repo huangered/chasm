@@ -1,6 +1,7 @@
 package com.yih.chasm.net;
 
 import com.yih.chasm.service.PaxosService;
+import com.yih.chasm.service.Verb;
 
 public class MessageDeliverTask implements Runnable {
     private final MessageIn<?> in;
@@ -11,7 +12,7 @@ public class MessageDeliverTask implements Runnable {
 
     @Override
     public void run() {
-        PaxosService.Verb verb = in.verb;
+        Verb verb = in.verb;
         IVerbHandler handler = PaxosService.instance().getVerbHandler(verb);
         handler.doVerb(in);
     }

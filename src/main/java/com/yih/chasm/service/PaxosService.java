@@ -1,19 +1,15 @@
 package com.yih.chasm.service;
 
 import com.yih.chasm.io.IVersonSerializer;
-import com.yih.chasm.net.IAsyncCallback;
-import com.yih.chasm.net.IVerbHandler;
-import com.yih.chasm.net.MessageOut;
-import com.yih.chasm.paxos.Commit;
-import com.yih.chasm.paxos.PrepareVerbHandler;
-import com.yih.chasm.paxos.ProposeVerbHandler;
+import com.yih.chasm.net.*;
+import com.yih.chasm.paxos.*;
 import com.yih.chasm.transport.Frame;
-import com.yih.chasm.transport.Message;
 import com.yih.chasm.util.PsUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.xml.ws.Endpoint;
 import java.net.InetSocketAddress;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -28,17 +24,42 @@ public class PaxosService {
             put(Verb.PAXOS_PREPARE, Commit.serializer);
             put(Verb.PAXOS_PROPOSE, Commit.serializer);
             put(Verb.PAXOS_COMMIT, Commit.serializer);
+            put(Verb.REQUEST_RESPONSE, Commit.serializer);
         }
     };
+
+    public static EnumMap<Verb, IVersonSerializer<?>> callbackSerializers = new EnumMap<Verb, IVersonSerializer<?>>(Verb.class) {
+        {
+            put(Verb.PAXOS_PREPARE, PrepareResponse.serializer);
+            put(Verb.PAXOS_PROPOSE, ProposeResponse.serializer);
+        }
+    };
+
     public static EnumMap<Verb, IVerbHandler<?>> verbHandlers = new EnumMap<Verb, IVerbHandler<?>>(Verb.class) {
         {
+            put(Verb.PAXOS_COMMIT, new PrepareVerbHandler());
             put(Verb.PAXOS_PREPARE, new PrepareVerbHandler());
             put(Verb.PAXOS_PROPOSE, new ProposeVerbHandler());
+            put(Verb.REQUEST_RESPONSE, new TestHander());
         }
     };
+
+    @Slf4j
+    public static class TestHander implements IVerbHandler<Commit> {
+
+        @Override
+        public void doVerb(MessageIn<Commit> in) {
+            IAsyncCallback<Commit> callback = PaxosService.instance().getCallback(in.payload.getTraceId().toString());
+            if (callback != null) {
+                log.info("{}", callback);
+            }
+
+        }
+    }
+
     public final Map<String, IAsyncCallback<?>> callbacks = new HashMap<>();
 
-    private final Map<String, Channel> channels =new HashMap<>();
+    private final Map<EndPoint, Channel> channels = new HashMap<>();
 
     private static PaxosService service = new PaxosService();
 
@@ -46,7 +67,7 @@ public class PaxosService {
         return service;
     }
 
-    public void put(String key, IAsyncCallback callback) {
+    public void putCallback(String key, IAsyncCallback callback) {
         callbacks.put(key, callback);
     }
 
@@ -58,30 +79,31 @@ public class PaxosService {
         return verbHandlers.get(verb);
     }
 
-    public IVersonSerializer getSerializer(Verb verb){
+    public IVersonSerializer getSerializer(Verb verb) {
         return versionSerializers.get(verb);
     }
 
-    public void registerChannel(String address, Channel channel) {
-        channels.put(address.toString(), channel);
+    public void registerChannel(EndPoint ep, Channel channel) {
+        channels.put(ep, channel);
     }
 
-    public void sendPrepare(MessageOut<Commit> out, InetSocketAddress endpoint) {
-        log.info("{}", out);
+    public void unregisterChannel(EndPoint ep) {
+        channels.remove(ep);
+    }
+
+    public void sendRR(MessageOut<Commit> out, EndPoint endpoint) {
         ByteBuf buf = PsUtil.createBuf();
-        Commit.serializer.serialize(out.payload, buf);
-        Channel c = channels.get(endpoint.toString());
-        c.writeAndFlush(new Frame(1, Message.Type.REP.opcode, buf.readableBytes(), buf));
+        out.serializer.serialize(out.payload, buf);
+        Channel c = channels.get(endpoint);
+        c.writeAndFlush(new Frame(1, out.verb.id, buf.readableBytes(), buf, 1));
     }
 
-    public void sendPropose(MessageOut<Commit> out, InetSocketAddress endpoint) {
-
+    public void sendBack(MessageOut out, EndPoint endpoint) {
+        ByteBuf buf = PsUtil.createBuf();
+        out.serializer.serialize(out.payload, buf);
+        Channel c = channels.get(endpoint);
+        c.writeAndFlush(new Frame(1, out.verb.id, buf.readableBytes(), buf, 2));
     }
 
-    public enum Verb {
-        REQUEST_RESPONSE,
-        PAXOS_PREPARE,
-        PAXOS_PROPOSE,
-        PAXOS_COMMIT,
-    }
+
 }

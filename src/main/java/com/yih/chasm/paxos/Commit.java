@@ -7,32 +7,36 @@ import lombok.Data;
 @Data
 public class Commit {
 
-    private int id;
+    private Integer traceId;
 
-    public Commit(int id){
-        this.id = id;
+    private Integer proposalNumber;
+
+    public Commit(int traceId, Integer proposalNumber) {
+        this.traceId = traceId;
+        this.proposalNumber = proposalNumber;
     }
 
     public static final CommitSerializer serializer = new CommitSerializer();
 
-    public static Commit newPrepare(int id) {
-        return new Commit(id);
+    public static Commit newPrepare(int id, int n) {
+        return new Commit(id, n);
     }
 
-    public static Commit newPropose(int id) {
-        return new Commit(id);
+    public static Commit newPropose(int id, int n) {
+        return new Commit(id, n);
     }
 
     public static class CommitSerializer implements IVersonSerializer<Commit> {
 
         @Override
         public void serialize(Commit obj, ByteBuf buf) {
-buf.writeInt(obj.getId());
+            buf.writeInt(obj.traceId);
+            buf.writeInt(obj.proposalNumber);
         }
 
         @Override
         public Commit deserialize(ByteBuf buf) {
-            return new Commit(buf.readInt());
+            return new Commit(buf.readInt(), buf.readInt());
         }
     }
 }
