@@ -6,19 +6,10 @@ public enum Verb {
     PAXOS_PROPOSE(2),
     PAXOS_COMMIT(3);
 
-    public static final Verb[] verbIdx;
-
-    static {
-        verbIdx = new Verb[4];
-        for (Verb verb : Verb.values()) {
-            verbIdx[verb.id] = verb;
-        }
-    }
-
     public int id;
 
     Verb(int id) {
         this.id = id;
     }
-    
+
 }

@@ -9,8 +9,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.xml.ws.Endpoint;
-import java.net.InetSocketAddress;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,25 +41,10 @@ public class PaxosService {
             put(Verb.REQUEST_RESPONSE, new TestHander());
         }
     };
-
-    @Slf4j
-    public static class TestHander implements IVerbHandler<Commit> {
-
-        @Override
-        public void doVerb(MessageIn<Commit> in) {
-            IAsyncCallback<Commit> callback = PaxosService.instance().getCallback(in.payload.getTraceId().toString());
-            if (callback != null) {
-                log.info("{}", callback);
-            }
-
-        }
-    }
-
-    public final Map<String, IAsyncCallback<?>> callbacks = new HashMap<>();
+    private static PaxosService service = new PaxosService();
+    private final Map<String, IAsyncCallback<?>> callbacks = new HashMap<>();
 
     private final Map<EndPoint, Channel> channels = new HashMap<>();
-
-    private static PaxosService service = new PaxosService();
 
     public static PaxosService instance() {
         return service;
@@ -73,6 +56,10 @@ public class PaxosService {
 
     public IAsyncCallback getCallback(String key) {
         return callbacks.get(key);
+    }
+
+    public void removeCallback(String key) {
+        callbacks.remove(key);
     }
 
     public IVerbHandler getVerbHandler(Verb verb) {
@@ -95,14 +82,27 @@ public class PaxosService {
         ByteBuf buf = PsUtil.createBuf();
         out.serializer.serialize(out.payload, buf);
         Channel c = channels.get(endpoint);
-        c.writeAndFlush(new Frame(1, out.verb.id, buf.readableBytes(), buf, 1));
+        c.writeAndFlush(new Frame(1, out.verb.id, buf.readableBytes(), buf, Direction.REQUEST));
     }
 
     public void sendBack(MessageOut out, EndPoint endpoint) {
         ByteBuf buf = PsUtil.createBuf();
         out.serializer.serialize(out.payload, buf);
         Channel c = channels.get(endpoint);
-        c.writeAndFlush(new Frame(1, out.verb.id, buf.readableBytes(), buf, 2));
+        c.writeAndFlush(new Frame(1, out.verb.id, buf.readableBytes(), buf, Direction.RESPONSE));
+    }
+
+    @Slf4j
+    public static class TestHander implements IVerbHandler<Commit> {
+
+        @Override
+        public void doVerb(MessageIn<Commit> in) {
+            IAsyncCallback<Commit> callback = PaxosService.instance().getCallback(in.payload.getTraceId().toString());
+            if (callback != null) {
+                log.info("{}", callback);
+            }
+
+        }
     }
 
 

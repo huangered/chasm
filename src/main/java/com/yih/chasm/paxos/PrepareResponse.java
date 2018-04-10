@@ -7,18 +7,19 @@ import lombok.Data;
 @Data
 public class PrepareResponse {
 
-    private int traceId;
-
+    public static final PrepareResponseSerializer serializer = new PrepareResponseSerializer();
     private boolean promised;
+    private int traceId;
+    private Commit commit;
 
-    public PrepareResponse(){}
-
-    public PrepareResponse(int traceId, boolean promised) {
-        this.traceId = traceId;
-        this.promised = promised;
+    public PrepareResponse() {
     }
 
-    public static final PrepareResponseSerializer serializer = new PrepareResponseSerializer();
+    public PrepareResponse(int traceId, boolean promised, Commit commit) {
+        this.traceId = traceId;
+        this.promised = promised;
+        this.commit = commit;
+    }
 
     public static class PrepareResponseSerializer implements IVersonSerializer<PrepareResponse> {
 
@@ -26,6 +27,7 @@ public class PrepareResponse {
         public void serialize(PrepareResponse obj, ByteBuf buf) {
             buf.writeInt(obj.getTraceId());
             buf.writeBoolean(obj.promised);
+            Commit.serializer.serialize(obj.commit, buf);
         }
 
         @Override
@@ -33,6 +35,7 @@ public class PrepareResponse {
             PrepareResponse pr = new PrepareResponse();
             pr.setTraceId(buf.readInt());
             pr.setPromised(buf.readBoolean());
+            pr.setCommit(Commit.serializer.deserialize(buf));
             return pr;
         }
     }

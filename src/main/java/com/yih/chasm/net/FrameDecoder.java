@@ -1,5 +1,6 @@
 package com.yih.chasm.net;
 
+import com.yih.chasm.service.Direction;
 import com.yih.chasm.transport.Frame;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -21,7 +22,7 @@ public class FrameDecoder extends ByteToMessageDecoder {
 //        log.info("{}", opcode);
         int length = msg.readInt();
         ByteBuf payload = msg.readBytes(length);
-        results.add(new Frame(version, opcode, length, payload, direct));
+        results.add(new Frame(version, opcode, length, payload, Direction.values()[direct]));
 
     }
 }

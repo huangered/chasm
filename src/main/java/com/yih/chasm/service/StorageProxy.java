@@ -51,7 +51,8 @@ public class StorageProxy {
             log.info("prepare paxos fail");
         }
 
-        proposePaxos(commit, config.getEndPoints());
+        ProposeCallback s2 = proposePaxos(commit, config.getEndPoints());
+        log.info("ok~~");
     }
 
     private PrepareCallback preparePaxos(Commit commit, List<EndPoint> endpoints) {
@@ -63,10 +64,11 @@ public class StorageProxy {
             PaxosService.instance().sendRR(out, endpoint);
         }
         prepareCallback.awaitWithTime();
+        PaxosService.instance().removeCallback(commit.getTraceId().toString());
         return prepareCallback;
     }
 
-    private void proposePaxos(Commit commit, List<EndPoint> endpoints) {
+    private ProposeCallback proposePaxos(Commit commit, List<EndPoint> endpoints) {
         ProposeCallback proposeCallback = new ProposeCallback(endpoints.size());
         PaxosService.instance().putCallback(commit.getTraceId().toString(), proposeCallback);
         for (EndPoint endpoint : endpoints) {
@@ -75,5 +77,7 @@ public class StorageProxy {
             PaxosService.instance().sendRR(out, endpoint);
         }
         proposeCallback.awaitWithTime();
+        PaxosService.instance().removeCallback(commit.getTraceId().toString());
+        return proposeCallback;
     }
 }

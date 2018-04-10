@@ -16,7 +16,7 @@ public class PsUtil {
         return allocator.buffer(size);
     }
 
-    public static void writeInt(int value, ByteBuf buf){
+    public static void writeInt(int value, ByteBuf buf) {
         buf.writeInt(value);
     }
 }

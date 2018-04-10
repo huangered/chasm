@@ -7,7 +7,6 @@ import lombok.Data;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -52,7 +51,7 @@ public class Config {
                 endPoints.add(new EndPoint(host, Integer.parseInt(port)));
             }
 
-           String port  = prop.getProperty("port");
+            String port = prop.getProperty("port");
             this.port = Integer.parseInt(port);
         } catch (Exception e) {
             e.printStackTrace();

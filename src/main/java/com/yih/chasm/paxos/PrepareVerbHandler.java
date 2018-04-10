@@ -8,8 +8,6 @@ import com.yih.chasm.service.Verb;
 import com.yih.chasm.storage.MetaService;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.temporal.ValueRange;
-
 @Slf4j
 public class PrepareVerbHandler implements IVerbHandler<Commit> {
     @Override
@@ -26,7 +24,7 @@ public class PrepareVerbHandler implements IVerbHandler<Commit> {
             re = new Commit(in.payload.getTraceId(), v.getAcceptNumber().getProposalNumber());
         }
 
-        MessageOut<PrepareResponse> out = new MessageOut<>(new PrepareResponse(re.getTraceId(), false), PrepareResponse.serializer, Verb.PAXOS_PREPARE);
+        MessageOut<PrepareResponse> out = new MessageOut<>(new PrepareResponse(re.getTraceId(), true, re), PrepareResponse.serializer, Verb.PAXOS_PREPARE);
         PaxosService.instance().sendBack(out, in.from);
     }
 }

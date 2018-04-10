@@ -19,7 +19,7 @@ public class FrameEncoder extends MessageToMessageEncoder<Frame> {
         ByteBuf buf = allocator.buffer();
         buf.writeInt(msg.getVersion());
         buf.writeInt(msg.getVerb().id);
-        buf.writeInt(msg.getDirect());
+        buf.writeInt(msg.getDirect().id);
 //        log.info("{}", msg.getVerb().id);
         buf.writeInt(msg.getLength());
 

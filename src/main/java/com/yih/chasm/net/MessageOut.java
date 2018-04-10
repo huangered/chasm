@@ -1,7 +1,6 @@
 package com.yih.chasm.net;
 
 import com.yih.chasm.io.IVersonSerializer;
-import com.yih.chasm.service.PaxosService;
 import com.yih.chasm.service.Verb;
 import lombok.Data;
 

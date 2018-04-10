@@ -7,12 +7,12 @@ import lombok.Data;
 
 @Data
 public class ProposeResponse {
+    public static final ProposeResponseSerializer serializer = new ProposeResponseSerializer();
     private int traceId;
 
     public ProposeResponse(int traceId) {
         this.traceId = traceId;
     }
-    public static final ProposeResponseSerializer serializer = new ProposeResponseSerializer();
 
     public static class ProposeResponseSerializer implements IVersonSerializer<ProposeResponse> {
 

@@ -1,24 +1,26 @@
 package com.yih.chasm.transport;
 
-import com.yih.chasm.net.*;
-import com.yih.chasm.paxos.Commit;
-import com.yih.chasm.service.PaxosService;
+import com.yih.chasm.net.EndPoint;
+import com.yih.chasm.net.FrameDecoder;
+import com.yih.chasm.net.FrameEncoder;
+import com.yih.chasm.net.FrameMsgHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 
 import java.net.InetSocketAddress;
 
-public class Client implements Runnable{
+public class Client implements Runnable {
     protected Bootstrap bootstrap;
     protected Channel channel;
 
     private EndPoint ep;
-    public Client(EndPoint ep){
+
+    public Client(EndPoint ep) {
         this.ep = ep;
     }
 
-    public void run(){
+    public void run() {
         connect();
     }
 

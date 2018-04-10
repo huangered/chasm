@@ -28,7 +28,7 @@ public class MetaService {
 
     }
 
-    public Value  getValue(Integer key) {
+    public Value getValue(Integer key) {
         if (!valueMap.containsKey(key)) {
             valueMap.put(key, new Value());
         }
@@ -36,9 +36,9 @@ public class MetaService {
     }
 
     @Data
-    public static class Value{
-        private Commit acceptNumber = new Commit(0,0);
-        private Commit acceptValue = new Commit(0,0);
+    public static class Value {
+        private Commit acceptNumber = new Commit(0, 0);
+        private Commit acceptValue = new Commit(0, 0);
     }
 }
 

@@ -1,9 +1,9 @@
 package com.yih.chasm.transport;
 
 
-import com.yih.chasm.net.FrameMsgHandler;
 import com.yih.chasm.net.FrameDecoder;
 import com.yih.chasm.net.FrameEncoder;
+import com.yih.chasm.net.FrameMsgHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -18,7 +18,7 @@ public class Server implements Runnable {
 
     private Integer port;
 
-    public Server(Integer port){
+    public Server(Integer port) {
         this.port = port;
     }
 
@@ -32,9 +32,9 @@ public class Server implements Runnable {
                     .childHandler(new ChannelInitializer<SocketChannel>() { // (4)
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast("server-frame-decoder" , new FrameDecoder());
+                            ch.pipeline().addLast("server-frame-decoder", new FrameDecoder());
                             ch.pipeline().addLast(new FrameEncoder());
-                            ch.pipeline().addLast("server-handler" , new FrameMsgHandler());
+                            ch.pipeline().addLast("server-handler", new FrameMsgHandler());
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)          // (5)

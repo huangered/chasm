@@ -4,7 +4,7 @@ import javax.management.*;
 import java.lang.management.ManagementFactory;
 
 public class Test {
-    public void test(){
+    public void test() {
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
 
         Game mbean = new Game();

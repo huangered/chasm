@@ -12,7 +12,7 @@ public class ProposeVerbHandler implements IVerbHandler<Commit> {
     @Override
     public void doVerb(MessageIn<Commit> in) {
         log.info("{}", in);
-        MessageOut<ProposeResponse> out = new MessageOut<>(new ProposeResponse(in.payload.getTraceId()), ProposeResponse.serializer, Verb.PAXOS_PROPOSE );
+        MessageOut<ProposeResponse> out = new MessageOut<>(new ProposeResponse(in.payload.getTraceId()), ProposeResponse.serializer, Verb.PAXOS_PROPOSE);
         PaxosService.instance().sendBack(out, in.from);
     }
 }

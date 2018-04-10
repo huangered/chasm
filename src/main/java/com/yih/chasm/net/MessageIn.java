@@ -6,9 +6,6 @@ import com.yih.chasm.service.Verb;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-
 @Data
 public class MessageIn<T> {
     public final EndPoint from;

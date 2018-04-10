@@ -20,7 +20,7 @@ public abstract class AbstractPaxosCallback<T> implements IAsyncCallback<T> {
         }
     }
 
-    public void awaitWithTime(){
+    public void awaitWithTime() {
 
         try {
             latch.await(5, TimeUnit.SECONDS);

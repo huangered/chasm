@@ -7,16 +7,14 @@ import lombok.Data;
 @Data
 public class Commit {
 
+    public static final CommitSerializer serializer = new CommitSerializer();
     private Integer traceId;
-
     private Integer proposalNumber;
 
     public Commit(int traceId, Integer proposalNumber) {
         this.traceId = traceId;
         this.proposalNumber = proposalNumber;
     }
-
-    public static final CommitSerializer serializer = new CommitSerializer();
 
     public static Commit newPrepare(int id, int n) {
         return new Commit(id, n);
