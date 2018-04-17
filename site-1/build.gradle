@@ -8,6 +8,7 @@
 
 
 plugins {
+    id 'io.franzbecker.gradle-lombok' version '1.11'
     id 'java'
     id 'application'
     id 'idea'
@@ -23,6 +24,8 @@ repositories {
 }
 
 dependencies {
+    compile project(":core")
+
     // This dependency is found on compile classpath of this component and consumers.
     compile 'com.google.guava:guava:23.0'
     compile 'io.netty:netty-all:4.1.22.Final'
