@@ -44,6 +44,7 @@ public class PaxosState {
             pr = new ProposeResponse(toPropose.getRnd(), false);
         } else {
             MetaService.instance().getByInstance(toPropose.getRnd()).setValue(toPropose.getValue());
+            vrnd = toPropose.getRnd();
             pr = new ProposeResponse(toPropose.getRnd(), true);
         }
         return pr;
