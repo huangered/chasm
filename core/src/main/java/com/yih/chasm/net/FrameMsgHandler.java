@@ -36,7 +36,7 @@ public class FrameMsgHandler extends SimpleChannelInboundHandler<Frame> { // (1)
         InetSocketAddress address = (InetSocketAddress) ctx.channel().remoteAddress();
 
         if (msg.getDirect() == Verb.RESPONSE) {
-            IVersonSerializer<?> serializer = PaxosService.callbackSerializers.get(msg.getPhase());
+            IVersonSerializer<?> serializer = PaxosService.instance().getCallbackSerializer(msg.getPhase());
             Object payload = serializer.deserialize(msg.getPayload());
 
             IAsyncCallback callback = PaxosService.instance().getCallback(Long.toString(msg.getTraceId()));
@@ -44,7 +44,7 @@ public class FrameMsgHandler extends SimpleChannelInboundHandler<Frame> { // (1)
             callback.response(mi);
 
         } else if (msg.getDirect() == Verb.REQUEST) {
-            IVersonSerializer<?> serializer = PaxosService.versionSerializers.get(msg.getPhase());
+            IVersonSerializer<?> serializer = PaxosService.instance().getVersionSerializer(msg.getPhase());
 
             Object data = serializer.deserialize(msg.getPayload());
             log.info("{}", data);

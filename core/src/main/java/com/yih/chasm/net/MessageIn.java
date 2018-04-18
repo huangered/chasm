@@ -20,7 +20,7 @@ public class MessageIn<T> {
     public static <M> MessageIn<M> read(ByteBuf buf) {
 
         Phase v = Phase.values()[buf.readInt()];
-        IVersonSerializer handler = PaxosService.instance().getSerializer(v);
+        IVersonSerializer handler = PaxosService.instance().getVersionSerializer(v);
         Object payload = handler.deserialize(buf);
 
         return new MessageIn(null, payload, v, 123);
