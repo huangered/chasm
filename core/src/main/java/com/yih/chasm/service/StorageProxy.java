@@ -18,6 +18,7 @@ import java.util.List;
 @Slf4j
 public class StorageProxy {
 
+    static int i = 0;
     Server server;
     ClientPool clients;
     Config config;
@@ -38,31 +39,30 @@ public class StorageProxy {
 
     }
 
-    public void beginPaxos(long rnd, String value ) {
+    public void beginPaxos(long rnd, String value) {
 
         Commit commit = Commit.newPrepare(rnd);
 
         PrepareCallback summary = preparePaxos(commit, config.getEndPoints());
-        if (summary.promised != null && summary.promised == false) {
+        if (!summary.isPromised()) {
             log.info("prepare paxos fail");
             return;
         }
 
-        if (Strings.isNullOrEmpty(summary.getValue()) ) {
-            summary.setValue(value);
+        if (Strings.isNullOrEmpty(summary.getResponse().getValue())) {
+            summary.getResponse().setValue(value);
         }
-        commit = Commit.newPropose(summary.getRnd(), summary.getValue());
+        commit = Commit.newPropose(summary.getResponse().getRnd(), summary.getResponse().getValue());
         ProposeCallback s2 = proposePaxos(commit, config.getEndPoints());
-        log.info("ok {}", s2.isPromised());
-        log.info("data {}", MetaService.valueMap);
+        log.info("propose {} data {}", s2.isSuccessful(), MetaService.valueMap);
     }
 
-    private PrepareCallback preparePaxos(Commit commit, List<EndPoint> endpoints) {
+    private PrepareCallback preparePaxos(Commit toPrepare, List<EndPoint> endpoints) {
         int traceId = genId();
-        PrepareCallback prepareCallback = new PrepareCallback(requreNum(endpoints), commit.getRnd());
-        PaxosService.instance().putCallback(Integer.toString( traceId), prepareCallback);
+        PrepareCallback prepareCallback = new PrepareCallback(requireNum(endpoints), toPrepare);
+        PaxosService.instance().putCallback(Integer.toString(traceId), prepareCallback);
         for (EndPoint endpoint : endpoints) {
-            MessageOut<Commit> out = new MessageOut<>(commit, Commit.serializer, Phase.PAXOS_PREPARE, traceId);
+            MessageOut<Commit> out = new MessageOut<>(toPrepare, Commit.serializer, Phase.PAXOS_PREPARE, traceId);
 
             PaxosService.instance().sendRR(out, endpoint);
         }
@@ -71,12 +71,12 @@ public class StorageProxy {
         return prepareCallback;
     }
 
-    private ProposeCallback proposePaxos(Commit commit, List<EndPoint> endpoints) {
+    private ProposeCallback proposePaxos(Commit toPropose, List<EndPoint> endpoints) {
         int traceId = genId();
-        ProposeCallback proposeCallback = new ProposeCallback(requreNum(endpoints));
+        ProposeCallback proposeCallback = new ProposeCallback(requireNum(endpoints));
         PaxosService.instance().putCallback(Integer.toString(traceId), proposeCallback);
         for (EndPoint endpoint : endpoints) {
-            MessageOut<Commit> out = new MessageOut<>(commit, Commit.serializer, Phase.PAXOS_PROPOSE, traceId);
+            MessageOut<Commit> out = new MessageOut<>(toPropose, Commit.serializer, Phase.PAXOS_PROPOSE, traceId);
 
             PaxosService.instance().sendRR(out, endpoint);
         }
@@ -85,13 +85,11 @@ public class StorageProxy {
         return proposeCallback;
     }
 
-    private int requreNum(List endpoints) {
+    private int requireNum(List endpoints) {
         return endpoints.size() / 2 + 1;
     }
 
-    static int i = 0;
-
-    private int genId(){
-     return i++;
+    private int genId() {
+        return i++;
     }
 }

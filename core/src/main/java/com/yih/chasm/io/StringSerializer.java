@@ -2,7 +2,7 @@ package com.yih.chasm.io;
 
 import io.netty.buffer.ByteBuf;
 
-public  class StringSerializer implements IVersonSerializer<String> {
+public class StringSerializer implements IVersonSerializer<String> {
 
     @Override
     public void serialize(String obj, ByteBuf buf) {

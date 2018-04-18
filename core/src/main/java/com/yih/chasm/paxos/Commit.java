@@ -9,10 +9,10 @@ import lombok.Data;
 public class Commit {
 
     public static final CommitSerializer serializer = new CommitSerializer();
-    private Long rnd;
+    private long rnd;
     private String value;
 
-    public Commit(Long rnd, String value) {
+    public Commit(long rnd, String value) {
         this.rnd = rnd;
         this.value = value;
     }

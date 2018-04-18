@@ -10,7 +10,7 @@ public class PrepareResponse {
 
     public static final PrepareResponseSerializer serializer = new PrepareResponseSerializer();
     private long vrnd;
-    private Long last_rnd;
+    private long last_rnd;
     private String value;
 
     public PrepareResponse() {

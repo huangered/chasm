@@ -7,30 +7,31 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Data
 public class PrepareCallback extends AbstractPaxosCallback<PrepareResponse> {
-    public Boolean promised;
-    private long rnd;
-    private String value;
-    private long v_rnd;
+    private boolean promised = true;
+    private Commit request;
+    private Commit response;
 
-    public PrepareCallback(int count, long rnd) {
+    public PrepareCallback(int count, Commit commit) {
         super(count);
-        this.rnd = rnd;
+        this.request = commit;
+        this.response = commit;
     }
 
     @Override
-    public void response(MessageIn<PrepareResponse> in) {
+    public synchronized void response(MessageIn<PrepareResponse> in) {
         log.info("handle response {}", in);
         PrepareResponse pr = in.payload;
-        if (pr.getLast_rnd() > rnd) {
+        if (pr.getLast_rnd() > request.getRnd()) {
             promised = false;
             while (this.latch.getCount() > 0) {
                 this.latch.countDown();
             }
-        } else {
-            if (pr.getVrnd() > v_rnd) {
-                value = pr.getValue();
-            }
-            this.latch.countDown();
+            return;
         }
+        if (pr.getVrnd() > response.getRnd()) {
+            response.setValue(pr.getValue());
+        }
+        this.latch.countDown();
+
     }
 }

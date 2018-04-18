@@ -3,9 +3,12 @@ package com.yih.chasm.paxos;
 import com.yih.chasm.net.MessageIn;
 import lombok.Data;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 @Data
 public class ProposeCallback extends AbstractPaxosCallback<ProposeResponse> {
-    private boolean promised;
+
+    private AtomicInteger accepts = new AtomicInteger(0);
 
     public ProposeCallback(int count) {
         super(count);
@@ -15,10 +18,18 @@ public class ProposeCallback extends AbstractPaxosCallback<ProposeResponse> {
     public void response(MessageIn<ProposeResponse> in) {
         ProposeResponse pr = in.payload;
         if (pr.isPromised()) {
-            latch.countDown();
-            if (latch.getCount() ==0) {
-                promised =true;
+            accepts.incrementAndGet();
+        }
+        latch.countDown();
+
+        if (isSuccessful()) {
+            while (latch.getCount() > 0) {
+                latch.countDown();
             }
         }
+    }
+
+    public boolean isSuccessful() {
+        return accepts.get() >= latch.getCount();
     }
 }
