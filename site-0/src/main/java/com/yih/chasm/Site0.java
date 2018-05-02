@@ -2,7 +2,6 @@ package com.yih.chasm;
 
 import com.yih.chasm.config.Config;
 import com.yih.chasm.paxos.PaxosState;
-import com.yih.chasm.service.PaxosService;
 import com.yih.chasm.service.StorageProxy;
 import com.yih.chasm.storage.MetaService;
 

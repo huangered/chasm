@@ -1,5 +1,6 @@
 package com.yih.chasm.storage;
 
+import com.yih.chasm.service.PaxosService;
 import lombok.Data;
 
 import java.io.*;
@@ -25,7 +26,8 @@ public class MetaService {
             while ((line = reader.readLine()) != null) {
                 String[] array = line.split(",", 2);
                 Long id = Long.parseLong(array[0]);
-                MetaService.valueMap.put(id, new Value(array[1]));
+                Integer iid = Integer.parseInt(array[1]);
+                MetaService.valueMap.put(id, new Value(iid, array[2]));
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -39,7 +41,7 @@ public class MetaService {
             BufferedWriter reader = new BufferedWriter(new FileWriter(name));
 
             for (Map.Entry<Long, Value> entry : MetaService.valueMap.entrySet()) {
-                String line = entry.getKey() + "," + entry.getValue().getValue();
+                String line = entry.getKey() + "," + entry.getValue().getIid() + "," + entry.getValue().getValue();
                 reader.write(line);
                 reader.write("\r\n");
             }
@@ -57,8 +59,9 @@ public class MetaService {
     }
 
     public void createInstance(Long rnd) {
-        Value v = new Value("");
+        Value v = new Value(PaxosService.instanceId, "");
         valueMap.put(rnd, v);
+        PaxosService.instanceId++;
     }
 
     public Value getByInstance(Long rnd) {
@@ -70,9 +73,12 @@ public class MetaService {
 
     @Data
     public static class Value {
+
+        private Integer iid;
         private String value = "";
 
-        public Value(String value) {
+        public Value(Integer iid, String value) {
+            this.iid = iid;
             this.value = value;
         }
     }
