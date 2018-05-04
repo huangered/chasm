@@ -12,7 +12,7 @@ import java.util.TreeMap;
 public class MetaService {
 
     final static String name = "storage";
-    public static Map<Long, PaxosInstance> valueMap = new TreeMap<>();
+    private static Map<Long, PaxosInstance> valueMap = new TreeMap<>();
     private static MetaService service = new MetaService(0);
     private long instance_id;
 
@@ -81,7 +81,7 @@ public class MetaService {
     public void print(){
         log.info("=====");
         for (Map.Entry<Long, PaxosInstance> entry : valueMap.entrySet()) {
-            log.info("id {} value {} accept {}", entry.getKey(), entry.getValue().getValue(), entry.getValue().getAccepted());
+            log.info("iid {} value {} accept {}", entry.getKey(), entry.getValue().getValue(), entry.getValue().getAccepted());
         }
     }
 }

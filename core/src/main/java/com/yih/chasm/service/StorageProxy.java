@@ -55,7 +55,9 @@ public class StorageProxy {
         }
         commit = Commit.newPropose(summary.getResponse().getRnd(), summary.getResponse().getValue());
         ProposeCallback s2 = proposePaxos(commit, config.getEndPoints());
-        MetaService.instance().print();
+        if(s2.isSuccessful()){
+            log.info("success paxos");
+        }
     }
 
     private PrepareCallback preparePaxos(Commit toPrepare, List<EndPoint> endpoints) {
@@ -87,7 +89,7 @@ public class StorageProxy {
     }
 
     private int requireNum(List endpoints) {
-        return endpoints.size() / 2 + 1;
+        return endpoints.size();
     }
 
     private int genId() {

@@ -28,12 +28,13 @@ public class Site0 {
         sp.run();
         Thread.sleep(5000);
         sp.beginPaxos(1, "a", "test");
-        sp.beginPaxos(2, "a","ggg");
-        sp.beginPaxos(3, "a","jfkls");
-        sp.beginPaxos(2, "a","jk");
-        sp.beginPaxos(5,"a", "jk");
-
-
+        sp.beginPaxos(2, "a", "ggg");
+        sp.beginPaxos(3, "a", "jfkls");
+        sp.beginPaxos(2, "a", "jk");
+        for (int i = 0; i < 100; i++) {
+            sp.beginPaxos(5, "a", "jk");
+        }
+MetaService.instance().print();
 
     }
 }
