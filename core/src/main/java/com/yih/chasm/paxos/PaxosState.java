@@ -1,49 +1,42 @@
 package com.yih.chasm.paxos;
 
-import com.google.common.util.concurrent.Striped;
 import com.yih.chasm.storage.MetaService;
+import com.yih.chasm.storage.PaxosInstance;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.concurrent.locks.Lock;
 
 @Slf4j
 public class PaxosState {
 
-    private static final Striped<Lock> LOCKS = Striped.lazyWeakLock(1024);
-
-    private static Commit accepted = new Commit(0L, "");
-
-    private static Commit promised = new Commit(0L, "");
-
-    public static void print() {
-        log.info("paxos status {} {}", accepted.getRnd(), promised.getRnd());
-    }
-
     public static PrepareResponse prepare(Commit toPrepare) {
 
-        MetaService.Value value = MetaService.instance().getByInstance(toPrepare.getRnd());
-        long t = accepted.getRnd();
+        PaxosInstance curInst = MetaService.instance().currentInstance();
+        SuggestionID promised = curInst.getPromised();
         PrepareResponse pr;
-        if (toPrepare.getRnd() > accepted.getRnd()) {
+        if (toPrepare.getRnd().compareTo(promised) > 0) {
             // write
             // ok
-            accepted.setRnd(toPrepare.getRnd());
-            pr = new PrepareResponse(t, promised.getRnd(), value.getValue());
+            curInst.setPromised(toPrepare.getRnd());
+            if (curInst.getAccepted() != null) {
+                pr = new PrepareResponse(curInst.getPromised(), curInst.getAccepted(), curInst.getValue());
+            } else {
+                pr = new PrepareResponse(curInst.getPromised());
+            }
         } else {
             // false
-            pr = new PrepareResponse(t, promised.getRnd(), value.getValue());
+            pr = new PrepareResponse(promised);
         }
         return pr;
     }
 
     public static ProposeResponse propose(Commit toPropose) {
+        PaxosInstance curInst = MetaService.instance().createInstance();
         ProposeResponse pr;
-        if (toPropose.getRnd() != accepted.getRnd()) {
-            pr = new ProposeResponse(toPropose.getRnd(), false);
+        if (toPropose.getRnd().compareTo(curInst.getPromised()) >= 0) {
+            curInst.setAccepted(toPropose.getRnd());
+            curInst.setValue(toPropose.getValue());
+            pr = new ProposeResponse(true);
         } else {
-            MetaService.instance().getByInstance(toPropose.getRnd()).setValue(toPropose.getValue());
-            promised.setRnd(toPropose.getRnd());
-            pr = new ProposeResponse(toPropose.getRnd(), true);
+            pr = new ProposeResponse(false);
         }
         return pr;
     }

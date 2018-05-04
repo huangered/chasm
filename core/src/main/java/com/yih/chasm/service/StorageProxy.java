@@ -8,6 +8,7 @@ import com.yih.chasm.net.MessageOut;
 import com.yih.chasm.paxos.Commit;
 import com.yih.chasm.paxos.PrepareCallback;
 import com.yih.chasm.paxos.ProposeCallback;
+import com.yih.chasm.paxos.SuggestionID;
 import com.yih.chasm.storage.MetaService;
 import com.yih.chasm.transport.ClientPool;
 import com.yih.chasm.transport.Server;
@@ -39,9 +40,9 @@ public class StorageProxy {
 
     }
 
-    public void beginPaxos(long rnd, String value) {
+    public void beginPaxos(long rnd, String str, String value) {
 
-        Commit commit = Commit.newPrepare(rnd);
+        Commit commit = Commit.newPrepare(new SuggestionID(rnd, str));
 
         PrepareCallback summary = preparePaxos(commit, config.getEndPoints());
         if (!summary.isPromised()) {

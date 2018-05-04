@@ -8,11 +8,9 @@ import lombok.Data;
 @Data
 public class ProposeResponse {
     public static final ProposeResponseSerializer serializer = new ProposeResponseSerializer();
-    private Long rnd;
     private boolean promised;
 
-    public ProposeResponse(Long rnd, boolean promised) {
-        this.rnd = rnd;
+    public ProposeResponse(boolean promised) {
         this.promised = promised;
     }
 
@@ -20,13 +18,12 @@ public class ProposeResponse {
 
         @Override
         public void serialize(ProposeResponse obj, ByteBuf buf) {
-            buf.writeLong(obj.getRnd());
             buf.writeBoolean(obj.isPromised());
         }
 
         @Override
         public ProposeResponse deserialize(ByteBuf buf) {
-            ProposeResponse pr = new ProposeResponse(buf.readLong(), buf.readBoolean());
+            ProposeResponse pr = new ProposeResponse(buf.readBoolean());
 
             return pr;
         }

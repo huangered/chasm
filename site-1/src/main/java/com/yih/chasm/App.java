@@ -17,7 +17,7 @@ public class App {
         StorageProxy sp = new StorageProxy(c);
         sp.run();
         Thread.sleep(5000);
-        sp.beginPaxos(1, "x");
+//        sp.beginPaxos(1, "x");
 
     }
 }

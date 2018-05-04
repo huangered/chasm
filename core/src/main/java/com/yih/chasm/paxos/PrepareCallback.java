@@ -21,14 +21,14 @@ public class PrepareCallback extends AbstractPaxosCallback<PrepareResponse> {
     public synchronized void response(MessageIn<PrepareResponse> in) {
         log.info("handle response {}", in);
         PrepareResponse pr = in.payload;
-        if (pr.getLast_rnd() > request.getRnd()) {
+        if (pr.getPromised().compareTo(request.getRnd()) > 0) {
             promised = false;
             while (this.latch.getCount() > 0) {
                 this.latch.countDown();
             }
             return;
         }
-        if (pr.getVrnd() > response.getRnd()) {
+        if (pr.getAccepted() != null && pr.getAccepted().compareTo(response.getRnd()) > 0) {
             response.setValue(pr.getValue());
         }
         this.latch.countDown();

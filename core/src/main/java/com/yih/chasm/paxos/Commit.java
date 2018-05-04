@@ -9,19 +9,24 @@ import lombok.Data;
 public class Commit {
 
     public static final CommitSerializer serializer = new CommitSerializer();
-    private long rnd;
+    private SuggestionID rnd;
     private String value;
 
-    public Commit(long rnd, String value) {
+    public Commit(SuggestionID propose) {
+        this.rnd = propose;
+        this.value = "";
+    }
+
+    public Commit(SuggestionID rnd, String value) {
         this.rnd = rnd;
         this.value = value;
     }
 
-    public static Commit newPrepare(long rnd) {
-        return new Commit(rnd, "");
+    public static Commit newPrepare(SuggestionID rnd) {
+        return new Commit(rnd);
     }
 
-    public static Commit newPropose(long rnd, String value) {
+    public static Commit newPropose(SuggestionID rnd, String value) {
         return new Commit(rnd, value);
     }
 
@@ -29,13 +34,14 @@ public class Commit {
 
         @Override
         public void serialize(Commit obj, ByteBuf buf) {
-            buf.writeLong(obj.rnd);
+            buf.writeLong(obj.rnd.getPropose_id());
+            new StringSerializer().serialize(obj.rnd.getFrom_uid(), buf);
             new StringSerializer().serialize(obj.value, buf);
         }
 
         @Override
         public Commit deserialize(ByteBuf buf) {
-            return new Commit(buf.readLong(), new StringSerializer().deserialize(buf));
+            return new Commit(SuggestionID.serializer.deserialize(buf), new StringSerializer().deserialize(buf));
         }
     }
 }

@@ -15,7 +15,7 @@ public class ProposeCallback extends AbstractPaxosCallback<ProposeResponse> {
     }
 
     @Override
-    public void response(MessageIn<ProposeResponse> in) {
+    public synchronized void response(MessageIn<ProposeResponse> in) {
         ProposeResponse pr = in.payload;
         if (pr.isPromised()) {
             accepts.incrementAndGet();

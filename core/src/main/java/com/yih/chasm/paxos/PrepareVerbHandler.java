@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PrepareVerbHandler implements IVerbHandler<Commit> {
     @Override
-    public void doVerb(MessageIn<Commit> in) {
+    public synchronized void doVerb(MessageIn<Commit> in) {
         PrepareResponse pr = PaxosState.prepare(in.payload);
 
         MessageOut<PrepareResponse> out = new MessageOut<>(pr, PrepareResponse.serializer, Phase.PAXOS_PREPARE, in.traceId);

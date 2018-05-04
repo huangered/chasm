@@ -7,6 +7,7 @@ import lombok.Data;
 
 @Data
 public class SuggestionID implements Comparable<SuggestionID> {
+    public static final SuggestionID.SuggestionIdSerializer serializer = new SuggestionIdSerializer();
     private long propose_id;
     private String from_uid;
 
@@ -14,8 +15,6 @@ public class SuggestionID implements Comparable<SuggestionID> {
         this.propose_id = propose_id;
         this.from_uid = from_uid;
     }
-
-    public static final SuggestionID.SuggestionIdSerializer serializer = new SuggestionIdSerializer();
 
     @Override
     public int compareTo(SuggestionID o) {

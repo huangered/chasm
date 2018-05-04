@@ -27,16 +27,12 @@ public class Site0 {
         StorageProxy sp = new StorageProxy(c);
         sp.run();
         Thread.sleep(5000);
-        sp.beginPaxos(1, "test");
-        PaxosState.print();
-        sp.beginPaxos(2, "ggg");
-        PaxosState.print();
-        sp.beginPaxos(3, "jfkls");
-        PaxosState.print();
-        sp.beginPaxos(2, "jk");
-        PaxosState.print();
-        sp.beginPaxos(5, "jk");
-        PaxosState.print();
+        sp.beginPaxos(1, "a", "test");
+        sp.beginPaxos(2, "a","ggg");
+        sp.beginPaxos(3, "a","jfkls");
+        sp.beginPaxos(2, "a","jk");
+        sp.beginPaxos(5,"a", "jk");
+
 
 
     }

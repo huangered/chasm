@@ -9,7 +9,6 @@
 
 plugins {
     id 'java'
-    id 'application'
     id 'idea'
 }
 
@@ -37,7 +36,3 @@ dependencies {
     // Use JUnit test framework
     testCompile 'junit:junit:4.12'
 }
-
-// Define the main class for the application
-mainClassName = 'com.yih.chasm.App'
-

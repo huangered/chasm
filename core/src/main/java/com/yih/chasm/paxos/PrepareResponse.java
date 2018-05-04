@@ -9,16 +9,23 @@ import lombok.Data;
 public class PrepareResponse {
 
     public static final PrepareResponseSerializer serializer = new PrepareResponseSerializer();
-    private long vrnd;
-    private long last_rnd;
+    private SuggestionID promised;
+    private SuggestionID accepted;
     private String value;
 
     public PrepareResponse() {
     }
 
-    public PrepareResponse(long last_rnd, long vrnd, String value) {
-        this.last_rnd = last_rnd;
-        this.vrnd = vrnd;
+
+    public PrepareResponse(SuggestionID promised) {
+        this.promised = promised;
+        this.accepted = null;
+        this.value = null;
+    }
+
+    public PrepareResponse(SuggestionID promised, SuggestionID accepted, String value) {
+        this.promised = promised;
+        this.accepted = accepted;
         this.value = value;
     }
 
@@ -26,17 +33,25 @@ public class PrepareResponse {
 
         @Override
         public void serialize(PrepareResponse obj, ByteBuf buf) {
-            buf.writeLong(obj.getLast_rnd());
-            buf.writeLong(obj.vrnd);
-            new StringSerializer().serialize(obj.value, buf);
+            SuggestionID.serializer.serialize(obj.promised, buf);
+            if (obj.accepted != null) {
+                buf.writeBoolean(true);
+                SuggestionID.serializer.serialize(obj.accepted, buf);
+                new StringSerializer().serialize(obj.value, buf);
+            } else {
+                buf.writeBoolean(false);
+            }
         }
 
         @Override
         public PrepareResponse deserialize(ByteBuf buf) {
             PrepareResponse pr = new PrepareResponse();
-            pr.setLast_rnd(buf.readLong());
-            pr.setVrnd(buf.readLong());
-            pr.setValue(new StringSerializer().deserialize(buf));
+            pr.setPromised(SuggestionID.serializer.deserialize(buf));
+            boolean hasAccept = buf.readBoolean();
+            if (hasAccept) {
+                pr.setAccepted(SuggestionID.serializer.deserialize(buf));
+                pr.setValue(new StringSerializer().deserialize(buf));
+            }
             return pr;
         }
     }
