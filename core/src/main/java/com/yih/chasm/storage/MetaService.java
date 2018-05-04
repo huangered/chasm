@@ -1,15 +1,18 @@
 package com.yih.chasm.storage;
 
 import com.yih.chasm.paxos.SuggestionID;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
+@Slf4j
 public class MetaService {
 
     final static String name = "storage";
-    public static Map<Long, PaxosInstance> valueMap = new HashMap<>();
+    public static Map<Long, PaxosInstance> valueMap = new TreeMap<>();
     private static MetaService service = new MetaService(0);
     private long instance_id;
 
@@ -73,5 +76,12 @@ public class MetaService {
             createInstance();
         }
         return valueMap.get(instance_id);
+    }
+
+    public void print(){
+        log.info("=====");
+        for (Map.Entry<Long, PaxosInstance> entry : valueMap.entrySet()) {
+            log.info("id {} value {}", entry.getKey(), entry.getValue().getValue());
+        }
     }
 }
