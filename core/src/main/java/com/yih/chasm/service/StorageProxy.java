@@ -35,8 +35,8 @@ public class StorageProxy {
         Thread sThread = new Thread(server);
         sThread.start();
 
-        Thread cThread = new Thread(clients);
-        cThread.start();
+//        Thread cThread = new Thread(clients);
+//        cThread.start();
 
     }
 

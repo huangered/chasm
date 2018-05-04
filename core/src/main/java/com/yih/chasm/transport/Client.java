@@ -7,11 +7,13 @@ import com.yih.chasm.net.FrameMsgHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.Callable;
 
+@Data
 @Slf4j
 public class Client implements Callable<Boolean> {
     protected Bootstrap bootstrap;
@@ -28,7 +30,7 @@ public class Client implements Callable<Boolean> {
         return establishConnection();
     }
 
-    public boolean establishConnection() {
+    private boolean establishConnection() {
         bootstrap = new Bootstrap()
                 .group(new NioEventLoopGroup())
                 .channel(io.netty.channel.socket.nio.NioSocketChannel.class)

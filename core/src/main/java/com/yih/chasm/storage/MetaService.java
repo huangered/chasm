@@ -81,7 +81,7 @@ public class MetaService {
     public void print(){
         log.info("=====");
         for (Map.Entry<Long, PaxosInstance> entry : valueMap.entrySet()) {
-            log.info("id {} value {}", entry.getKey(), entry.getValue().getValue());
+            log.info("id {} value {} accept {}", entry.getKey(), entry.getValue().getValue(), entry.getValue().getAccepted());
         }
     }
 }

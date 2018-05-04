@@ -1,10 +1,7 @@
 package com.yih.chasm.service;
 
 import com.yih.chasm.io.IVersonSerializer;
-import com.yih.chasm.net.EndPoint;
-import com.yih.chasm.net.IAsyncCallback;
-import com.yih.chasm.net.IVerbHandler;
-import com.yih.chasm.net.MessageOut;
+import com.yih.chasm.net.*;
 import com.yih.chasm.paxos.*;
 import com.yih.chasm.transport.Frame;
 import com.yih.chasm.util.ApiVersion;
@@ -86,8 +83,13 @@ public class PaxosService {
     public void sendRR(MessageOut<Commit> out, EndPoint endpoint) {
         ByteBuf buf = PsUtil.createBuf();
         out.serializer.serialize(out.payload, buf);
-        Channel c = channels.get(endpoint);
-        c.writeAndFlush(new Frame(ApiVersion.Version.id, out.phase.id, buf.readableBytes(), buf, Verb.REQUEST, out.getTracingId()));
+        Channel c = ConnectionManager.get(endpoint);
+        if (c.isActive()) {
+//        Channel c = channels.get(endpoint);
+            c.writeAndFlush(new Frame(ApiVersion.Version.id, out.phase.id, buf.readableBytes(), buf, Verb.REQUEST, out.getTracingId()));
+        } else {
+            log.error("endpoint {} is not active", endpoint);
+        }
     }
 
     public void sendBack(MessageOut out, EndPoint endpoint) {
