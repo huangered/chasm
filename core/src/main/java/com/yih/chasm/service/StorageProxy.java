@@ -69,7 +69,7 @@ public class StorageProxy {
 
             PaxosService.instance().sendRR(out, endpoint);
         }
-        prepareCallback.await();
+        prepareCallback.awaitWithTime(config.getTtl());
         PaxosService.instance().removeCallback(Integer.toString(traceId));
         return prepareCallback;
     }
@@ -83,7 +83,7 @@ public class StorageProxy {
 
             PaxosService.instance().sendRR(out, endpoint);
         }
-        proposeCallback.await();
+        proposeCallback.awaitWithTime(config.getTtl());
         PaxosService.instance().removeCallback(Integer.toString(traceId));
         return proposeCallback;
     }

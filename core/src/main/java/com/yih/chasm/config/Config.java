@@ -20,6 +20,8 @@ public class Config {
 
     private Integer port;
 
+    private Integer ttl;
+
     public Config() {
         propFileName = "config.properties";
     }
@@ -53,6 +55,9 @@ public class Config {
 
             String port = prop.getProperty("port");
             this.port = Integer.parseInt(port);
+
+            String ttl = prop.getProperty("ttl", "5");
+            this.ttl = Integer.parseInt(ttl);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

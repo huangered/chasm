@@ -17,6 +17,11 @@ public class SuggestionID implements Comparable<SuggestionID> {
     }
 
     @Override
+    public String toString(){
+        return String.format("Propose(%d - %s)", propose_id, from_uid);
+    }
+
+    @Override
     public int compareTo(SuggestionID o) {
         int cv = Long.compare(propose_id, o.propose_id);
         if (cv != 0) {
