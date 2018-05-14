@@ -17,7 +17,7 @@ public class SuggestionID implements Comparable<SuggestionID> {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return String.format("Propose(%d - %s)", propose_id, from_uid);
     }
 
@@ -35,13 +35,13 @@ public class SuggestionID implements Comparable<SuggestionID> {
         @Override
         public void serialize(SuggestionID obj, ByteBuf buf) {
             buf.writeLong(obj.propose_id);
-            new StringSerializer().serialize(obj.from_uid, buf);
+            StringSerializer.serializer.serialize(obj.from_uid, buf);
         }
 
         @Override
         public SuggestionID deserialize(ByteBuf buf) {
             long pid = buf.readLong();
-            String from_uid = new StringSerializer().deserialize(buf);
+            String from_uid = StringSerializer.serializer.deserialize(buf);
             return new SuggestionID(pid, from_uid);
         }
     }

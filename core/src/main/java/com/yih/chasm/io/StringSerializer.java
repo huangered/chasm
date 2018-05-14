@@ -4,6 +4,8 @@ import io.netty.buffer.ByteBuf;
 
 public class StringSerializer implements IVersonSerializer<String> {
 
+    public static final StringSerializer serializer = new StringSerializer();
+
     @Override
     public void serialize(String obj, ByteBuf buf) {
         buf.writeInt(obj.length());

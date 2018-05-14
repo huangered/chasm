@@ -35,8 +35,8 @@ public class Commit {
         @Override
         public void serialize(Commit obj, ByteBuf buf) {
             buf.writeLong(obj.rnd.getPropose_id());
-            new StringSerializer().serialize(obj.rnd.getFrom_uid(), buf);
-            new StringSerializer().serialize(obj.value, buf);
+            StringSerializer.serializer.serialize(obj.rnd.getFrom_uid(), buf);
+            StringSerializer.serializer.serialize(obj.value, buf);
         }
 
         @Override

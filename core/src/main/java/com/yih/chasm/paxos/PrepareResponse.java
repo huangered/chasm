@@ -37,7 +37,7 @@ public class PrepareResponse {
             if (obj.accepted != null) {
                 buf.writeBoolean(true);
                 SuggestionID.serializer.serialize(obj.accepted, buf);
-                new StringSerializer().serialize(obj.value, buf);
+                StringSerializer.serializer.serialize(obj.value, buf);
             } else {
                 buf.writeBoolean(false);
             }
@@ -50,7 +50,7 @@ public class PrepareResponse {
             boolean hasAccept = buf.readBoolean();
             if (hasAccept) {
                 pr.setAccepted(SuggestionID.serializer.deserialize(buf));
-                pr.setValue(new StringSerializer().deserialize(buf));
+                pr.setValue(StringSerializer.serializer.deserialize(buf));
             }
             return pr;
         }
