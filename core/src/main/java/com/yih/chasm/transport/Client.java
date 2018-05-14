@@ -1,9 +1,9 @@
 package com.yih.chasm.transport;
 
+import com.yih.chasm.net.ClientHandler;
 import com.yih.chasm.net.EndPoint;
 import com.yih.chasm.net.FrameDecoder;
 import com.yih.chasm.net.FrameEncoder;
-import com.yih.chasm.net.FrameMsgHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -53,17 +53,17 @@ public class Client implements Callable<Boolean> {
     }
 
     @Override
-    public Boolean call() throws Exception {
+    public Boolean call() {
         return connect();
     }
 
     private class Initializer extends ChannelInitializer<Channel> {
-        protected void initChannel(Channel channel) throws Exception {
+        protected void initChannel(Channel channel) {
             ChannelPipeline pipeline = channel.pipeline();
             pipeline.addLast("client-frame-decoder", new FrameDecoder());
             pipeline.addLast("client-frame-encoder", new FrameEncoder());
 
-            pipeline.addLast("client-handler", new FrameMsgHandler());
+            pipeline.addLast("client-handler", new ClientHandler());
         }
     }
 }

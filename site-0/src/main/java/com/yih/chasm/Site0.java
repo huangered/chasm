@@ -1,8 +1,6 @@
 package com.yih.chasm;
 
 import com.yih.chasm.config.Config;
-import com.yih.chasm.paxos.PaxosState;
-import com.yih.chasm.service.PaxosService;
 import com.yih.chasm.service.StorageProxy;
 import com.yih.chasm.storage.MetaService;
 
@@ -34,7 +32,7 @@ public class Site0 {
         for (int i = 0; i < 100; i++) {
             sp.beginPaxos(5, "a", "jk");
         }
-MetaService.instance().print();
+        MetaService.instance().print();
 
     }
 }

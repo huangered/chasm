@@ -1,7 +1,6 @@
 package com.yih.chasm.service;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.yih.chasm.config.Config;
 import com.yih.chasm.net.EndPoint;
 import com.yih.chasm.net.MessageOut;
@@ -9,8 +8,6 @@ import com.yih.chasm.paxos.Commit;
 import com.yih.chasm.paxos.PrepareCallback;
 import com.yih.chasm.paxos.ProposeCallback;
 import com.yih.chasm.paxos.SuggestionID;
-import com.yih.chasm.storage.MetaService;
-import com.yih.chasm.transport.ClientPool;
 import com.yih.chasm.transport.Server;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,14 +18,11 @@ public class StorageProxy {
 
     static int i = 0;
     Server server;
-    ClientPool clients;
     Config config;
 
     public StorageProxy(Config config) {
         this.config = config;
         server = new Server(config.getPort());
-
-        clients = new ClientPool(Lists.newArrayList(config.getEndPoints()));
     }
 
     public void run() {

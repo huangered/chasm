@@ -86,7 +86,7 @@ public class PaxosService {
         Channel c = ConnectionManager.get(endpoint);
         if (c.isActive()) {
 //        Channel c = channels.get(endpoint);
-            c.writeAndFlush(new Frame(ApiVersion.Version.id, out.phase.id, buf.readableBytes(), buf, Verb.REQUEST, out.getTracingId()));
+            c.writeAndFlush(new Frame(ApiVersion.Version.id, out.phase.id, buf.readableBytes(), buf, out.getTracingId()));
         } else {
             log.error("endpoint {} is not active", endpoint);
         }
@@ -96,6 +96,6 @@ public class PaxosService {
         ByteBuf buf = PsUtil.createBuf();
         out.serializer.serialize(out.payload, buf);
         Channel c = channels.get(endpoint);
-        c.writeAndFlush(new Frame(ApiVersion.Version.id, out.phase.id, buf.readableBytes(), buf, Verb.RESPONSE, out.getTracingId()));
+        c.writeAndFlush(new Frame(ApiVersion.Version.id, out.phase.id, buf.readableBytes(), buf, out.getTracingId()));
     }
 }

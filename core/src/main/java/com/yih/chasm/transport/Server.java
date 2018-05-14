@@ -3,7 +3,7 @@ package com.yih.chasm.transport;
 
 import com.yih.chasm.net.FrameDecoder;
 import com.yih.chasm.net.FrameEncoder;
-import com.yih.chasm.net.FrameMsgHandler;
+import com.yih.chasm.net.ServerHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -31,10 +31,10 @@ public class Server implements Runnable {
                     .channel(NioServerSocketChannel.class) // (3)
                     .childHandler(new ChannelInitializer<SocketChannel>() { // (4)
                         @Override
-                        public void initChannel(SocketChannel ch) throws Exception {
+                        public void initChannel(SocketChannel ch) {
                             ch.pipeline().addLast("server-frame-decoder", new FrameDecoder());
-                            ch.pipeline().addLast(new FrameEncoder());
-                            ch.pipeline().addLast("server-handler", new FrameMsgHandler());
+                            ch.pipeline().addLast("server-frame-encoder", new FrameEncoder());
+                            ch.pipeline().addLast("server-handler", new ServerHandler());
                         }
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)          // (5)
