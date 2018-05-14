@@ -6,6 +6,8 @@ import lombok.Data;
 
 @Data
 public class Frame {
+    public static final int MinLen = 4 + 4 + 8 + 4;
+
     private int version;
     private Phase phase;
     private long traceId;

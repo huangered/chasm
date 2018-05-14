@@ -21,4 +21,10 @@ public class ConnectionManager {
             return client.getChannel();
         }
     }
+
+    public static void remove(EndPoint endPoint) {
+        if (map.containsKey(endPoint)) {
+            map.remove(endPoint);
+        }
+    }
 }

@@ -23,7 +23,7 @@ public abstract class AbstractPaxosCallback<T> implements IAsyncCallback<T> {
     public void awaitWithTime(long timeout) {
 
         try {
-            latch.await(5, TimeUnit.SECONDS);
+            latch.await(timeout, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
