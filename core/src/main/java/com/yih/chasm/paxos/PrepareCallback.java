@@ -19,7 +19,7 @@ public class PrepareCallback extends AbstractPaxosCallback<PrepareResponse> {
 
     @Override
     public synchronized void response(MessageIn<PrepareResponse> in) {
-        log.info("handle response {}", in);
+        log.debug("handle response {}", in);
         PrepareResponse pr = in.payload;
         if (pr.getPromised().compareTo(request.getRnd()) > 0) {
             promised = false;

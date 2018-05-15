@@ -38,19 +38,19 @@ public class StorageProxy {
 
         Commit commit = Commit.newPrepare(new SuggestionID(rnd, str));
 
-        PrepareCallback summary = preparePaxos(commit, config.getEndPoints());
-        if (!summary.isPromised()) {
-            log.info("prepare paxos fail");
+        PrepareCallback prepareCallback = preparePaxos(commit, config.getEndPoints());
+        if (!prepareCallback.isPromised()) {
+            log.info("paxos prepare fail");
             return;
         }
 
-        if (Strings.isNullOrEmpty(summary.getResponse().getValue())) {
-            summary.getResponse().setValue(value);
+        if (Strings.isNullOrEmpty(prepareCallback.getResponse().getValue())) {
+            prepareCallback.getResponse().setValue(value);
         }
-        commit = Commit.newPropose(summary.getResponse().getRnd(), summary.getResponse().getValue());
-        ProposeCallback s2 = proposePaxos(commit, config.getEndPoints());
-        if(s2.isSuccessful()){
-            log.info("success paxos");
+        commit = Commit.newPropose(prepareCallback.getResponse().getRnd(), prepareCallback.getResponse().getValue());
+        ProposeCallback proposeCallback = proposePaxos(commit, config.getEndPoints());
+        if(proposeCallback.isSuccessful()){
+            log.info("paxos propose success");
         }
     }
 

@@ -88,30 +88,23 @@ public class PaxosService {
         out.serializer.serialize(out.payload, buf);
         Channel c = ConnectionManager.get(endpoint);
         if (c.isActive()) {
-//        Channel c = channels.get(endpoint);
             c.writeAndFlush(new Frame(ApiVersion.Version.id, out.phase.id, buf.readableBytes(), buf, out.getTracingId()));
         } else {
-            log.error("endpoint {} is not active", endpoint);
+            log.error("Channel {} error", endpoint);
         }
     }
 
     public void sendBack(MessageOut out, EndPoint endpoint) {
         ByteBuf buf = PsUtil.createBuf();
         out.serializer.serialize(out.payload, buf);
-        log.info("send back {} {} {}", buf.readerIndex(), buf.writerIndex(), buf.readableBytes());
+        log.debug("send back {} {} {}", buf.readerIndex(), buf.writerIndex(), buf.readableBytes());
 
         Channel c = channels.get(endpoint);
         if (c == null || !c.isActive()) {
-            log.info("channel error");
+            log.error("Channel {} error", endpoint);
         } else {
-          ChannelFuture cf = c.writeAndFlush(new Frame(ApiVersion.Version.id, out.phase.id, buf.readableBytes(), buf, out.getTracingId()));
-            try {
-                cf.get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
+            c.writeAndFlush(new Frame(ApiVersion.Version.id, out.phase.id, buf.readableBytes(), buf, out.getTracingId()));
+
         }
     }
 }

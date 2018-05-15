@@ -29,8 +29,8 @@ public class Site0 {
         sp.beginPaxos(2, "a", "ggg");
         sp.beginPaxos(3, "a", "jfkls");
         sp.beginPaxos(2, "a", "jk");
-        for (int i = 0; i < 100; i++) {
-            sp.beginPaxos(5, "a", "jk");
+        for (int i = 0; i < 10; i++) {
+            sp.beginPaxos(i, "abcdefghijklmnoperestuvwxya" +i, "adfklsajfkskf" + i);
         }
         MetaService.instance().print();
 

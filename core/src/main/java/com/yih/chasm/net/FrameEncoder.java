@@ -12,21 +12,12 @@ public class FrameEncoder extends MessageToByteEncoder<Frame> {
 
     @Override
     protected void encode(ChannelHandlerContext ctx, Frame msg, ByteBuf buf) {
-        ByteBuf bf = Unpooled.buffer();
+        int total = Frame.MinLen + msg.getLength() + 1;
+
+        ByteBuf bf = Unpooled.buffer(total);
         try {
-            int total = Frame.MinLen + msg.getLength();
-
-            log.info("encode {} len {} total {}", msg.getPhase(), msg.getLength(), total);
-
-            bf.writeByte(total);
-            bf.writeInt(msg.getVersion());
-            bf.writeInt(msg.getPhase().id);
-            bf.writeLong(msg.getTraceId());
-            bf.writeInt(msg.getLength());
-            bf.writeBytes(msg.getPayload());
-
+            Frame.serializer.serialize(msg, bf);
             buf.writeBytes(bf);
-
         } finally {
             msg.getPayload().release();
             bf.release();

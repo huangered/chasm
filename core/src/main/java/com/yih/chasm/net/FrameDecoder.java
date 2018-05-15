@@ -4,6 +4,7 @@ import com.yih.chasm.service.PaxosService;
 import com.yih.chasm.transport.Frame;
 import com.yih.chasm.util.ApiVersion;
 import com.yih.chasm.util.ChannelUtil;
+import com.yih.chasm.util.DebugUtil;
 import com.yih.chasm.util.PsUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -35,11 +36,10 @@ public class FrameDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> results) throws Exception {
-        ChannelUtil.debug(msg);
         int len = msg.readByte();
-        log.info("receive len {}", len);
+        log.debug("{} receive len {}", ctx.name(), len);
+
         if (msg.readableBytes() < Frame.MinLen) {
-            ChannelUtil.debugPrint(msg);
             return;
         }
 
@@ -50,20 +50,12 @@ public class FrameDecoder extends ByteToMessageDecoder {
         int opcode = msg.readInt();
         long traceId = msg.readLong();
         int length = msg.readInt();
-//        ByteBuf payload = PsUtil.createBuf(length);
-        if (length> msg.readableBytes()){
-            log.info("wrong {} len {} > {}", ctx.name(), length, msg.readableBytes());
-            ChannelUtil.debugPrint(msg);
-            throw new Exception("wrong body");
-        }
         ByteBuf payload = msg.readRetainedSlice(length);
         results.add(new Frame(version, opcode, length, payload, traceId));
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) { // (4)
-        // Close the connection when an exception is raised.
-        cause.printStackTrace();
         ctx.close();
     }
 }
