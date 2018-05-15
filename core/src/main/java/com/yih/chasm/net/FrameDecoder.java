@@ -18,7 +18,7 @@ public class FrameDecoder extends ByteToMessageDecoder {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
 
-        log.info("channel active " + ctx.name() + " " + ctx.channel().remoteAddress());
+        log.info("channel active " + ctx.name());
         EndPoint ep = ChannelUtil.getEndPoint(ctx.channel());
         PaxosService.instance().registerChannel(ep, ctx.channel());
         super.channelActive(ctx);
@@ -26,32 +26,44 @@ public class FrameDecoder extends ByteToMessageDecoder {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        log.info("channel inactive " + ctx.name());
         EndPoint ep = ChannelUtil.getEndPoint(ctx.channel());
         PaxosService.instance().unregisterChannel(ep);
+        ConnectionManager.remove(ep);
         super.channelInactive(ctx);
     }
 
     @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> results) {
-        try {
-            if (msg.readableBytes() < Frame.MinLen) {
-                return;
-            }
-            int version = msg.readInt();
-            if (version != ApiVersion.Version.id) {
-                return;
-            }
-            int opcode = msg.readInt();
-            long traceId = msg.readLong();
-            int length = msg.readInt();
-            ByteBuf payload = PsUtil.createBuf(length);
-            msg.readBytes(payload, length);
-            results.add(new Frame(version, opcode, length, payload, traceId));
-        } catch (Throwable t) {
-            t.printStackTrace();
-        } finally {
-//            log.info("ddd {}", msg.refCnt());
-//            log.info("ddd2 {}", msg.release());
+    protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> results) throws Exception {
+        ChannelUtil.debug(msg);
+        int len = msg.readByte();
+        log.info("receive len {}", len);
+        if (msg.readableBytes() < Frame.MinLen) {
+            ChannelUtil.debugPrint(msg);
+            return;
         }
+
+        int version = msg.readInt();
+        if (version != ApiVersion.Version.id) {
+            throw new Exception("wrong version");
+        }
+        int opcode = msg.readInt();
+        long traceId = msg.readLong();
+        int length = msg.readInt();
+//        ByteBuf payload = PsUtil.createBuf(length);
+        if (length> msg.readableBytes()){
+            log.info("wrong {} len {} > {}", ctx.name(), length, msg.readableBytes());
+            ChannelUtil.debugPrint(msg);
+            throw new Exception("wrong body");
+        }
+        ByteBuf payload = msg.readRetainedSlice(length);
+        results.add(new Frame(version, opcode, length, payload, traceId));
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) { // (4)
+        // Close the connection when an exception is raised.
+        cause.printStackTrace();
+        ctx.close();
     }
 }

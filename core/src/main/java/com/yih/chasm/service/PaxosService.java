@@ -5,14 +5,17 @@ import com.yih.chasm.net.*;
 import com.yih.chasm.paxos.*;
 import com.yih.chasm.transport.Frame;
 import com.yih.chasm.util.ApiVersion;
+import com.yih.chasm.util.ChannelUtil;
 import com.yih.chasm.util.PsUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 public class PaxosService {
@@ -95,7 +98,20 @@ public class PaxosService {
     public void sendBack(MessageOut out, EndPoint endpoint) {
         ByteBuf buf = PsUtil.createBuf();
         out.serializer.serialize(out.payload, buf);
+        log.info("send back {} {} {}", buf.readerIndex(), buf.writerIndex(), buf.readableBytes());
+
         Channel c = channels.get(endpoint);
-        c.writeAndFlush(new Frame(ApiVersion.Version.id, out.phase.id, buf.readableBytes(), buf, out.getTracingId()));
+        if (c == null || !c.isActive()) {
+            log.info("channel error");
+        } else {
+          ChannelFuture cf = c.writeAndFlush(new Frame(ApiVersion.Version.id, out.phase.id, buf.readableBytes(), buf, out.getTracingId()));
+            try {
+                cf.get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

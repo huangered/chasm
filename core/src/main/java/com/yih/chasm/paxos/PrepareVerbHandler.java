@@ -12,7 +12,7 @@ public class PrepareVerbHandler implements IVerbHandler<Commit> {
     @Override
     public synchronized void doVerb(MessageIn<Commit> in) {
         PrepareResponse pr = PaxosState.prepare(in.payload);
-
+log.info("pr {}", pr);
         MessageOut<PrepareResponse> out = new MessageOut<>(pr, PrepareResponse.serializer, Phase.PAXOS_PREPARE, in.traceId);
         PaxosService.instance().sendBack(out, in.from);
     }

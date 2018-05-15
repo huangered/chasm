@@ -7,6 +7,7 @@ import com.yih.chasm.net.FrameEncoder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -60,6 +61,8 @@ public class Client implements Callable<Boolean> {
     private class Initializer extends ChannelInitializer<Channel> {
         protected void initChannel(Channel channel) {
             ChannelPipeline pipeline = channel.pipeline();
+            pipeline.addLast("client-len-decoder", new LengthFieldBasedFrameDecoder(256, 0 , 1));
+
             pipeline.addLast("client-frame-decoder", new FrameDecoder());
             pipeline.addLast("client-frame-encoder", new FrameEncoder());
 

@@ -8,23 +8,23 @@ import java.util.concurrent.ConcurrentMap;
 
 public class ConnectionManager {
 
-    static ConcurrentMap<EndPoint, Channel> map = new ConcurrentHashMap<>();
+    static ConcurrentMap<EndPoint, Channel> pool = new ConcurrentHashMap<>();
 
     public static Channel get(EndPoint endPoint) {
-        if (map.containsKey(endPoint)) {
-            return map.get(endPoint);
+        if (pool.containsKey(endPoint)) {
+            return pool.get(endPoint);
         } else {
             Client client = new Client(endPoint);
             if (client.connect()) {
-                map.put(endPoint, client.getChannel());
+                pool.put(endPoint, client.getChannel());
             }
             return client.getChannel();
         }
     }
 
     public static void remove(EndPoint endPoint) {
-        if (map.containsKey(endPoint)) {
-            map.remove(endPoint);
+        if (pool.containsKey(endPoint)) {
+            pool.remove(endPoint);
         }
     }
 }

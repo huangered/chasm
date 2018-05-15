@@ -37,7 +37,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<Frame> { // (1)
         IVersonSerializer<?> serializer = PaxosService.instance().getVersionSerializer(msg.getPhase());
 
         Object data = serializer.deserialize(msg.getPayload());
-        log.info("{}", data);
+        log.info("server receive {}", data);
         MessageIn cm = new MessageIn<>(new EndPoint(address.getHostName(), address.getPort()), data, msg.getPhase(), msg.getTraceId());
         Thread t = new Thread(new MessageDeliverTask(cm));
         t.start();
