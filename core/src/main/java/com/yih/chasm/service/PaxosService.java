@@ -5,17 +5,14 @@ import com.yih.chasm.net.*;
 import com.yih.chasm.paxos.*;
 import com.yih.chasm.transport.Frame;
 import com.yih.chasm.util.ApiVersion;
-import com.yih.chasm.util.ChannelUtil;
-import com.yih.chasm.util.PsUtil;
+import com.yih.chasm.util.BufUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 @Slf4j
 public class PaxosService {
@@ -84,7 +81,7 @@ public class PaxosService {
     }
 
     public void sendRR(MessageOut<Commit> out, EndPoint endpoint) {
-        ByteBuf buf = PsUtil.createBuf();
+        ByteBuf buf = BufUtil.createBuf();
         out.serializer.serialize(out.payload, buf);
         Channel c = ConnectionManager.get(endpoint);
         if (c.isActive()) {
@@ -95,7 +92,7 @@ public class PaxosService {
     }
 
     public void sendBack(MessageOut out, EndPoint endpoint) {
-        ByteBuf buf = PsUtil.createBuf();
+        ByteBuf buf = BufUtil.createBuf();
         out.serializer.serialize(out.payload, buf);
         log.debug("send back {} {} {}", buf.readerIndex(), buf.writerIndex(), buf.readableBytes());
 

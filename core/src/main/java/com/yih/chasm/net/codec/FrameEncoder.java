@@ -1,4 +1,4 @@
-package com.yih.chasm.net;
+package com.yih.chasm.net.codec;
 
 import com.yih.chasm.transport.Frame;
 import io.netty.buffer.ByteBuf;

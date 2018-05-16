@@ -3,18 +3,14 @@ package com.yih.chasm.util;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
-public class PsUtil {
+public class BufUtil {
 
     public static ByteBuf createBuf() {
 
         return Unpooled.buffer();
-//        ByteBufAllocator allocator = new PooledByteBufAllocator(true);
-//        return allocator.buffer();
     }
 
     public static ByteBuf createBuf(int size) {
-//        ByteBufAllocator allocator = new PooledByteBufAllocator(true);
-//        return allocator.buffer(size);
         return Unpooled.buffer(size);
     }
 

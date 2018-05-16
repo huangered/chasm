@@ -1,11 +1,11 @@
-package com.yih.chasm.net;
+package com.yih.chasm.net.codec;
 
+import com.yih.chasm.net.ConnectionManager;
+import com.yih.chasm.net.EndPoint;
 import com.yih.chasm.service.PaxosService;
 import com.yih.chasm.transport.Frame;
 import com.yih.chasm.util.ApiVersion;
 import com.yih.chasm.util.ChannelUtil;
-import com.yih.chasm.util.DebugUtil;
-import com.yih.chasm.util.PsUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;

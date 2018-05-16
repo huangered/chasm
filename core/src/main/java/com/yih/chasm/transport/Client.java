@@ -1,9 +1,9 @@
 package com.yih.chasm.transport;
 
-import com.yih.chasm.net.ClientHandler;
+import com.yih.chasm.net.codec.ClientHandler;
 import com.yih.chasm.net.EndPoint;
-import com.yih.chasm.net.FrameDecoder;
-import com.yih.chasm.net.FrameEncoder;
+import com.yih.chasm.net.codec.FrameDecoder;
+import com.yih.chasm.net.codec.FrameEncoder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
