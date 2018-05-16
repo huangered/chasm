@@ -17,24 +17,24 @@ import java.util.Map;
 @Slf4j
 public class PaxosService {
 
-    private static EnumMap<Phase, IVersonSerializer<? super Commit>> versionSerializers = new EnumMap<Phase, IVersonSerializer<? super Commit>>(Phase.class) {
+    private static EnumMap<PaxosPhase, IVersonSerializer<? super Commit>> versionSerializers = new EnumMap<PaxosPhase, IVersonSerializer<? super Commit>>(PaxosPhase.class) {
         {
-            put(Phase.PAXOS_PREPARE, Commit.serializer);
-            put(Phase.PAXOS_PROPOSE, Commit.serializer);
+            put(PaxosPhase.PAXOS_PREPARE, Commit.serializer);
+            put(PaxosPhase.PAXOS_PROPOSE, Commit.serializer);
         }
     };
 
-    private static EnumMap<Phase, IVersonSerializer<?>> callbackSerializers = new EnumMap<Phase, IVersonSerializer<?>>(Phase.class) {
+    private static EnumMap<PaxosPhase, IVersonSerializer<?>> callbackSerializers = new EnumMap<PaxosPhase, IVersonSerializer<?>>(PaxosPhase.class) {
         {
-            put(Phase.PAXOS_PREPARE, PrepareResponse.serializer);
-            put(Phase.PAXOS_PROPOSE, ProposeResponse.serializer);
+            put(PaxosPhase.PAXOS_PREPARE, PrepareResponse.serializer);
+            put(PaxosPhase.PAXOS_PROPOSE, ProposeResponse.serializer);
         }
     };
 
-    private static EnumMap<Phase, IVerbHandler<?>> verbHandlers = new EnumMap<Phase, IVerbHandler<?>>(Phase.class) {
+    private static EnumMap<PaxosPhase, IVerbHandler<?>> verbHandlers = new EnumMap<PaxosPhase, IVerbHandler<?>>(PaxosPhase.class) {
         {
-            put(Phase.PAXOS_PREPARE, new PrepareVerbHandler());
-            put(Phase.PAXOS_PROPOSE, new ProposeVerbHandler());
+            put(PaxosPhase.PAXOS_PREPARE, new PrepareVerbHandler());
+            put(PaxosPhase.PAXOS_PROPOSE, new ProposeVerbHandler());
         }
     };
 
@@ -60,15 +60,15 @@ public class PaxosService {
         callbacks.remove(key);
     }
 
-    public IVerbHandler getVerbHandler(Phase phase) {
+    public IVerbHandler getVerbHandler(PaxosPhase phase) {
         return verbHandlers.get(phase);
     }
 
-    public IVersonSerializer getVersionSerializer(Phase phase) {
+    public IVersonSerializer getVersionSerializer(PaxosPhase phase) {
         return versionSerializers.get(phase);
     }
 
-    public IVersonSerializer getCallbackSerializer(Phase phase) {
+    public IVersonSerializer getCallbackSerializer(PaxosPhase phase) {
         return callbackSerializers.get(phase);
     }
 

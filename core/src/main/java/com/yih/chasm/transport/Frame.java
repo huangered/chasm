@@ -1,7 +1,7 @@
 package com.yih.chasm.transport;
 
 import com.yih.chasm.io.IVersonSerializer;
-import com.yih.chasm.service.Phase;
+import com.yih.chasm.service.PaxosPhase;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +11,7 @@ public class Frame {
     public static final int MinLen = 4 + 4 + 8 + 4;
 
     private int version;
-    private Phase phase;
+    private PaxosPhase phase;
     private long traceId;
     private int length;
     private ByteBuf payload;
@@ -21,7 +21,7 @@ public class Frame {
         this.version = version;
         this.length = length;
         this.payload = payload;
-        this.phase = Phase.values()[verbCode];
+        this.phase = PaxosPhase.values()[verbCode];
         this.traceId = traceId;
     }
 

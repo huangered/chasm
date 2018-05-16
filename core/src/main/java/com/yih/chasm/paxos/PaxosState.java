@@ -1,7 +1,6 @@
 package com.yih.chasm.paxos;
 
 import com.yih.chasm.storage.MetaService;
-import com.yih.chasm.storage.PaxosInstance;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

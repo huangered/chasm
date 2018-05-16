@@ -1,7 +1,7 @@
 package com.yih.chasm.net;
 
 import com.yih.chasm.io.IVersonSerializer;
-import com.yih.chasm.service.Phase;
+import com.yih.chasm.service.PaxosPhase;
 import lombok.Data;
 
 import java.net.InetAddress;
@@ -13,11 +13,11 @@ public class MessageOut<T> {
 
     public IVersonSerializer<T> serializer;
 
-    public Phase phase;
+    public PaxosPhase phase;
 
     private long tracingId;
 
-    public MessageOut(T payload, IVersonSerializer<T> serializer, Phase phase, long tracingId) {
+    public MessageOut(T payload, IVersonSerializer<T> serializer, PaxosPhase phase, long tracingId) {
 
         this.payload = payload;
         this.serializer = serializer;
@@ -25,7 +25,7 @@ public class MessageOut<T> {
         this.tracingId = tracingId;
     }
 
-    public static <M> MessageOut<M> create(Phase phase, M payload, long tracingId) {
+    public static <M> MessageOut<M> create(PaxosPhase phase, M payload, long tracingId) {
         return new MessageOut(payload, null, phase, tracingId);
     }
 }

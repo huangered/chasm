@@ -59,7 +59,7 @@ public class StorageProxy {
         PrepareCallback prepareCallback = new PrepareCallback(requireNum(endpoints), toPrepare);
         PaxosService.instance().putCallback(Integer.toString(traceId), prepareCallback);
         for (EndPoint endpoint : endpoints) {
-            MessageOut<Commit> out = new MessageOut<>(toPrepare, Commit.serializer, Phase.PAXOS_PREPARE, traceId);
+            MessageOut<Commit> out = new MessageOut<>(toPrepare, Commit.serializer, PaxosPhase.PAXOS_PREPARE, traceId);
 
             PaxosService.instance().sendRR(out, endpoint);
         }
@@ -73,7 +73,7 @@ public class StorageProxy {
         ProposeCallback proposeCallback = new ProposeCallback(requireNum(endpoints));
         PaxosService.instance().putCallback(Integer.toString(traceId), proposeCallback);
         for (EndPoint endpoint : endpoints) {
-            MessageOut<Commit> out = new MessageOut<>(toPropose, Commit.serializer, Phase.PAXOS_PROPOSE, traceId);
+            MessageOut<Commit> out = new MessageOut<>(toPropose, Commit.serializer, PaxosPhase.PAXOS_PROPOSE, traceId);
 
             PaxosService.instance().sendRR(out, endpoint);
         }

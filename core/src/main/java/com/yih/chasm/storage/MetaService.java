@@ -1,10 +1,10 @@
 package com.yih.chasm.storage;
 
+import com.yih.chasm.paxos.PaxosInstance;
 import com.yih.chasm.paxos.SuggestionID;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
