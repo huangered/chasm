@@ -18,8 +18,8 @@ buildscript {
 }
 
 plugins {
-    id 'java'
     id 'idea'
+    id 'java'
 }
 
 allprojects {
@@ -61,27 +61,27 @@ dependencies {
     // Use JUnit test framework
     testCompile 'junit:junit:4.12'
 }
+
 artifactory {
     contextUrl = "${artifactory_contextUrl}"   //The base Artifactory URL if not overridden by the publisher/resolver
-        publish {
-            repository {
-	    	repoKey = 'gradle-dev-local'
-		username = "${artifactory_user}"
-		password = "${artifactory_password}"
-		maven = true
-            }
-	     defaults {
-	                 publications ('mavenJava')
-			             }
-         }
-        resolve {
-            repository {
-                repoKey = 'gradle-dev'
-                username = "${artifactory_user}"
-                password = "${artifactory_password}"
-                maven = true
-	    }
+    publish {
+        repository {
+            repoKey = 'gradle-dev-local'
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+            maven = true
         }
+        defaults {
+            publications('mavenJava')
+        }
+    }
+    resolve {
+        repository {
+            repoKey = 'gradle-dev'
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+            maven = true
+        }
+    }
 
 }
-
