@@ -28,7 +28,7 @@ public class PaxosState {
     }
 
     public static ProposeResponse propose(Commit toPropose) {
-        PaxosInstance curInst = MetaService.instance().createInstance();
+        PaxosInstance curInst = MetaService.instance().currentInstance();
         ProposeResponse pr;
         if (toPropose.getRnd().compareTo(curInst.getPromised()) >= 0) {
             curInst.setAccepted(toPropose.getRnd());
@@ -38,5 +38,12 @@ public class PaxosState {
             pr = new ProposeResponse(false);
         }
         return pr;
+    }
+
+    public static void learn(Commit toLearn){
+        PaxosInstance curInst = MetaService.instance().currentInstance();
+        curInst.setValue(toLearn.getValue());
+        log.debug("Cur instance {}", curInst.getValue());
+        MetaService.instance().createInstance();
     }
 }

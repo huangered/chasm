@@ -52,6 +52,7 @@ public class StorageProxy {
         if(proposeCallback.isSuccessful()){
             log.info("paxos propose success");
         }
+        learnPaxos(commit, config.getEndPoints());
     }
 
     private PrepareCallback preparePaxos(Commit toPrepare, List<EndPoint> endpoints) {
@@ -80,6 +81,14 @@ public class StorageProxy {
         proposeCallback.awaitWithTime(config.getTtl());
         PaxosService.instance().removeCallback(Integer.toString(traceId));
         return proposeCallback;
+    }
+
+    private void learnPaxos(Commit toLearn , List<EndPoint> endpoints ){
+        for (EndPoint endpoint : endpoints) {
+            MessageOut<Commit> out = new MessageOut<>(toLearn, Commit.serializer, PaxosPhase.PAXOS_LEARN, 0L);
+
+            PaxosService.instance().sendRR(out, endpoint);
+        }
     }
 
     private int requireNum(List endpoints) {

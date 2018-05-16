@@ -27,8 +27,9 @@ public class ClientHandler extends SimpleChannelInboundHandler<Frame> { // (1)
 
         IAsyncCallback callback = PaxosService.instance().getCallback(Long.toString(msg.getTraceId()));
         MessageIn mi = MessageIn.create(ep, payload, msg.getPhase(), msg.getTraceId());
-        callback.response(mi);
-
+        if (callback!=null) {
+            callback.response(mi);
+        }
 
     }
 

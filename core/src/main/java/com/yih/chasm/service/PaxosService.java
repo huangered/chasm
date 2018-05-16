@@ -21,6 +21,7 @@ public class PaxosService {
         {
             put(PaxosPhase.PAXOS_PREPARE, Commit.serializer);
             put(PaxosPhase.PAXOS_PROPOSE, Commit.serializer);
+            put(PaxosPhase.PAXOS_LEARN, Commit.serializer);
         }
     };
 
@@ -35,6 +36,7 @@ public class PaxosService {
         {
             put(PaxosPhase.PAXOS_PREPARE, new PrepareVerbHandler());
             put(PaxosPhase.PAXOS_PROPOSE, new ProposeVerbHandler());
+            put(PaxosPhase.PAXOS_LEARN, new LearnVerbHandler());
         }
     };
 

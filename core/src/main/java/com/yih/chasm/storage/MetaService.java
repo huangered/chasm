@@ -59,6 +59,7 @@ public class MetaService {
     }
 
     public synchronized PaxosInstance createInstance() {
+        log.info("Create instance");
         instance_id++;
         PaxosInstance instance = new PaxosInstance(instance_id);
         instance.setPromised(new SuggestionID(-1L, ""));
