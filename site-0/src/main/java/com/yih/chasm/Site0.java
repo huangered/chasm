@@ -25,12 +25,9 @@ public class Site0 {
         StorageProxy sp = new StorageProxy(c);
         sp.run();
         Thread.sleep(5000);
-        sp.beginPaxos(1, "a", "test");
-        sp.beginPaxos(2, "a", "ggg");
-        sp.beginPaxos(3, "a", "jfkls");
-        sp.beginPaxos(2, "a", "jk");
         for (int i = 0; i < 10; i++) {
             sp.beginPaxos(i, "abcdefghijklmnoperestuvwxya" +i, "adfklsajfkskf" + i);
+            Thread.sleep(1000);
         }
         MetaService.instance().print();
 

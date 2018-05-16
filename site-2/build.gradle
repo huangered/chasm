@@ -10,7 +10,9 @@
 plugins {
     id 'io.franzbecker.gradle-lombok' version '1.11'
     id 'application'
+    id 'idea'
 }
+
 
 dependencies {
     compile project(":core")
