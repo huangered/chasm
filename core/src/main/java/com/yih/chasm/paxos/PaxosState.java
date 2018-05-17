@@ -40,7 +40,7 @@ public class PaxosState {
         return pr;
     }
 
-    public static void learn(Commit toLearn){
+    public static void learn(Commit toLearn) {
         PaxosInstance curInst = MetaService.instance().currentInstance();
         curInst.setValue(toLearn.getValue());
         log.debug("Cur instance {}", curInst.getValue());

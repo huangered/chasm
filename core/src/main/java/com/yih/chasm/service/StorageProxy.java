@@ -2,7 +2,6 @@ package com.yih.chasm.service;
 
 import com.google.common.base.Strings;
 import com.yih.chasm.config.Config;
-import com.yih.chasm.net.EndPoint;
 import com.yih.chasm.net.MessageOut;
 import com.yih.chasm.paxos.Commit;
 import com.yih.chasm.paxos.PrepareCallback;
@@ -11,6 +10,7 @@ import com.yih.chasm.paxos.SuggestionID;
 import com.yih.chasm.transport.Server;
 import lombok.extern.slf4j.Slf4j;
 
+import java.net.SocketAddress;
 import java.util.List;
 
 @Slf4j
@@ -49,17 +49,17 @@ public class StorageProxy {
         }
         commit = Commit.newPropose(prepareCallback.getResponse().getRnd(), prepareCallback.getResponse().getValue());
         ProposeCallback proposeCallback = proposePaxos(commit, config.getEndPoints());
-        if(proposeCallback.isSuccessful()){
+        if (proposeCallback.isSuccessful()) {
             log.info("paxos propose success");
         }
         learnPaxos(commit, config.getEndPoints());
     }
 
-    private PrepareCallback preparePaxos(Commit toPrepare, List<EndPoint> endpoints) {
+    private PrepareCallback preparePaxos(Commit toPrepare, List<SocketAddress> endpoints) {
         int traceId = genId();
         PrepareCallback prepareCallback = new PrepareCallback(requireNum(endpoints), toPrepare);
         PaxosService.instance().putCallback(Integer.toString(traceId), prepareCallback);
-        for (EndPoint endpoint : endpoints) {
+        for (SocketAddress endpoint : endpoints) {
             MessageOut<Commit> out = new MessageOut<>(toPrepare, Commit.serializer, PaxosPhase.PAXOS_PREPARE, traceId);
 
             PaxosService.instance().sendRR(out, endpoint);
@@ -69,11 +69,11 @@ public class StorageProxy {
         return prepareCallback;
     }
 
-    private ProposeCallback proposePaxos(Commit toPropose, List<EndPoint> endpoints) {
+    private ProposeCallback proposePaxos(Commit toPropose, List<SocketAddress> endpoints) {
         int traceId = genId();
         ProposeCallback proposeCallback = new ProposeCallback(requireNum(endpoints));
         PaxosService.instance().putCallback(Integer.toString(traceId), proposeCallback);
-        for (EndPoint endpoint : endpoints) {
+        for (SocketAddress endpoint : endpoints) {
             MessageOut<Commit> out = new MessageOut<>(toPropose, Commit.serializer, PaxosPhase.PAXOS_PROPOSE, traceId);
 
             PaxosService.instance().sendRR(out, endpoint);
@@ -83,8 +83,8 @@ public class StorageProxy {
         return proposeCallback;
     }
 
-    private void learnPaxos(Commit toLearn , List<EndPoint> endpoints ){
-        for (EndPoint endpoint : endpoints) {
+    private void learnPaxos(Commit toLearn, List<SocketAddress> endpoints) {
+        for (SocketAddress endpoint : endpoints) {
             MessageOut<Commit> out = new MessageOut<>(toLearn, Commit.serializer, PaxosPhase.PAXOS_LEARN, 0L);
 
             PaxosService.instance().sendRR(out, endpoint);

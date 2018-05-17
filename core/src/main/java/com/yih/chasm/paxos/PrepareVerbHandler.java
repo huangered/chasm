@@ -3,8 +3,8 @@ package com.yih.chasm.paxos;
 import com.yih.chasm.net.IVerbHandler;
 import com.yih.chasm.net.MessageIn;
 import com.yih.chasm.net.MessageOut;
-import com.yih.chasm.service.PaxosService;
 import com.yih.chasm.service.PaxosPhase;
+import com.yih.chasm.service.PaxosService;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

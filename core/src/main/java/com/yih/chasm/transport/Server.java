@@ -30,7 +30,7 @@ public class Server implements Runnable {
                     .childHandler(new ChannelInitializer<SocketChannel>() { // (4)
                         @Override
                         public void initChannel(SocketChannel ch) {
-                            ch.pipeline().addLast("server-len-decoder", new LengthFieldBasedFrameDecoder(256, 0 , 1));
+                            ch.pipeline().addLast("server-len-decoder", new LengthFieldBasedFrameDecoder(256, 0, 1));
                             ch.pipeline().addLast("server-frame-decoder", new FrameDecoder());
                             ch.pipeline().addLast("server-frame-encoder", new FrameEncoder());
                             ch.pipeline().addLast("server-handler", new ServerHandler());

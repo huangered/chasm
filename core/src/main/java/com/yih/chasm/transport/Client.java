@@ -1,7 +1,6 @@
 package com.yih.chasm.transport;
 
 import com.yih.chasm.net.codec.ClientHandler;
-import com.yih.chasm.net.EndPoint;
 import com.yih.chasm.net.codec.FrameDecoder;
 import com.yih.chasm.net.codec.FrameEncoder;
 import io.netty.bootstrap.Bootstrap;
@@ -11,7 +10,7 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
-import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.concurrent.Callable;
 
 @Data
@@ -20,9 +19,9 @@ public class Client implements Callable<Boolean> {
     protected Bootstrap bootstrap;
     protected Channel channel;
 
-    private EndPoint ep;
+    private SocketAddress ep;
 
-    public Client(EndPoint ep) {
+    public Client(SocketAddress ep) {
         this.ep = ep;
     }
 
@@ -40,7 +39,7 @@ public class Client implements Callable<Boolean> {
         // Configure the pipeline factory.
         bootstrap.handler(new Initializer());
 
-        ChannelFuture future = bootstrap.connect(new InetSocketAddress(ep.getIp(), ep.getPort()));
+        ChannelFuture future = bootstrap.connect(ep);
 
         // Wait until the connection attempt succeeds or fails.
         channel = future.awaitUninterruptibly().channel();
@@ -61,7 +60,7 @@ public class Client implements Callable<Boolean> {
     private class Initializer extends ChannelInitializer<Channel> {
         protected void initChannel(Channel channel) {
             ChannelPipeline pipeline = channel.pipeline();
-            pipeline.addLast("client-len-decoder", new LengthFieldBasedFrameDecoder(256, 0 , 1));
+            pipeline.addLast("client-len-decoder", new LengthFieldBasedFrameDecoder(256, 0, 1));
 
             pipeline.addLast("client-frame-decoder", new FrameDecoder());
             pipeline.addLast("client-frame-encoder", new FrameEncoder());

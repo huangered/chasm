@@ -1,14 +1,20 @@
 package com.yih.chasm.storage;
 
 import com.yih.chasm.paxos.PaxosInstance;
-import com.yih.chasm.util.BufUtil;
-import io.netty.buffer.ByteBuf;
 
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class WriterThread implements Runnable {
 
     private ConcurrentLinkedDeque<PaxosInstance> queue = new ConcurrentLinkedDeque<>();
+
+    public static void main(String[] argc) {
+        ConcurrentLinkedDeque<Integer> queue = new ConcurrentLinkedDeque<>();
+        queue.push(1);
+        queue.push(2);
+        System.out.println(queue.pop());
+        System.out.println(queue.pop());
+    }
 
     public void add(PaxosInstance instance) {
         queue.push(instance);
@@ -23,13 +29,5 @@ public class WriterThread implements Runnable {
             }
 
         }
-    }
-
-    public static void main(String[] argc) {
-        ConcurrentLinkedDeque<Integer> queue = new ConcurrentLinkedDeque<>();
-        queue.push(1);
-        queue.push(2);
-        System.out.println(queue.pop());
-        System.out.println(queue.pop());
     }
 }

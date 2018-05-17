@@ -1,11 +1,9 @@
 package com.yih.chasm.net.codec;
 
 import com.yih.chasm.net.ConnectionManager;
-import com.yih.chasm.net.EndPoint;
 import com.yih.chasm.service.PaxosService;
 import com.yih.chasm.transport.Frame;
 import com.yih.chasm.util.ApiVersion;
-import com.yih.chasm.util.ChannelUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -19,18 +17,16 @@ public class FrameDecoder extends ByteToMessageDecoder {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
 
-        log.info("channel active " + ctx.name());
-        EndPoint ep = ChannelUtil.getEndPoint(ctx.channel());
-        PaxosService.instance().registerChannel(ep, ctx.channel());
+
+        PaxosService.instance().registerChannel(ctx.channel().remoteAddress(), ctx.channel());
         super.channelActive(ctx);
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         log.info("channel inactive " + ctx.name());
-        EndPoint ep = ChannelUtil.getEndPoint(ctx.channel());
-        PaxosService.instance().unregisterChannel(ep);
-        ConnectionManager.remove(ep);
+        PaxosService.instance().unregisterChannel(ctx.channel().remoteAddress());
+        ConnectionManager.remove(ctx.channel().remoteAddress());
         super.channelInactive(ctx);
     }
 

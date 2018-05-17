@@ -1,6 +1,5 @@
 package com.yih.chasm.paxos;
 
-import com.yih.chasm.paxos.SuggestionID;
 import lombok.Data;
 
 @Data

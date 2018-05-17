@@ -1,7 +1,10 @@
 package com.yih.chasm.service;
 
 import com.yih.chasm.io.IVersonSerializer;
-import com.yih.chasm.net.*;
+import com.yih.chasm.net.ConnectionManager;
+import com.yih.chasm.net.IAsyncCallback;
+import com.yih.chasm.net.IVerbHandler;
+import com.yih.chasm.net.MessageOut;
 import com.yih.chasm.paxos.*;
 import com.yih.chasm.transport.Frame;
 import com.yih.chasm.util.ApiVersion;
@@ -10,6 +13,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
 
+import java.net.SocketAddress;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +48,7 @@ public class PaxosService {
 
     private final Map<String, IAsyncCallback<?>> callbacks = new HashMap<>();
 
-    private final Map<EndPoint, Channel> channels = new HashMap<>();
+    private final Map<SocketAddress, Channel> channels = new HashMap<>();
 
     public static PaxosService instance() {
         return service;
@@ -74,15 +78,15 @@ public class PaxosService {
         return callbackSerializers.get(phase);
     }
 
-    public void registerChannel(EndPoint ep, Channel channel) {
+    public void registerChannel(SocketAddress ep, Channel channel) {
         channels.put(ep, channel);
     }
 
-    public void unregisterChannel(EndPoint ep) {
+    public void unregisterChannel(SocketAddress ep) {
         channels.remove(ep);
     }
 
-    public void sendRR(MessageOut<Commit> out, EndPoint endpoint) {
+    public void sendRR(MessageOut<Commit> out, SocketAddress endpoint) {
         ByteBuf buf = BufUtil.createBuf();
         out.serializer.serialize(out.payload, buf);
         Channel c = ConnectionManager.get(endpoint);
@@ -93,7 +97,7 @@ public class PaxosService {
         }
     }
 
-    public void sendBack(MessageOut out, EndPoint endpoint) {
+    public void sendBack(MessageOut out, SocketAddress endpoint) {
         ByteBuf buf = BufUtil.createBuf();
         out.serializer.serialize(out.payload, buf);
         log.debug("send back {} {} {}", buf.readerIndex(), buf.writerIndex(), buf.readableBytes());

@@ -1,12 +1,10 @@
 package com.yih.chasm.net.codec;
 
 import com.yih.chasm.io.IVersonSerializer;
-import com.yih.chasm.net.EndPoint;
 import com.yih.chasm.net.MessageDeliverTask;
 import com.yih.chasm.net.MessageIn;
 import com.yih.chasm.service.PaxosService;
 import com.yih.chasm.transport.Frame;
-import com.yih.chasm.util.ChannelUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -22,15 +20,13 @@ public class ServerHandler extends SimpleChannelInboundHandler<Frame> { // (1)
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
 
         log.info("channel active " + ctx.name() + " " + ctx.channel().remoteAddress());
-        EndPoint ep = ChannelUtil.getEndPoint(ctx.channel());
-        PaxosService.instance().registerChannel(ep, ctx.channel());
+        PaxosService.instance().registerChannel(ctx.channel().remoteAddress(), ctx.channel());
         super.channelActive(ctx);
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        EndPoint ep = ChannelUtil.getEndPoint(ctx.channel());
-        PaxosService.instance().unregisterChannel(ep);
+        PaxosService.instance().unregisterChannel(ctx.channel().remoteAddress());
         super.channelInactive(ctx);
     }
 
@@ -42,7 +38,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<Frame> { // (1)
 
         Object data = serializer.deserialize(msg.getPayload());
         log.debug("Receive data {}", data);
-        MessageIn cm = new MessageIn<>(new EndPoint(address.getHostName(), address.getPort()), data, msg.getPhase(), msg.getTraceId());
+        MessageIn cm = new MessageIn<>(address, data, msg.getPhase(), msg.getTraceId());
         Thread t = new Thread(new MessageDeliverTask(cm));
         t.start();
     }

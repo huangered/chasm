@@ -1,7 +1,7 @@
 package com.yih.chasm.net;
 
-import com.yih.chasm.service.PaxosService;
 import com.yih.chasm.service.PaxosPhase;
+import com.yih.chasm.service.PaxosService;
 
 public class MessageDeliverTask implements Runnable {
     private final MessageIn<?> in;

@@ -16,9 +16,8 @@ public class MetaService {
     private final static String NAME = "storage";
     private static Map<Long, PaxosInstance> valueMap = new TreeMap<>();
     private static MetaService service = new MetaService(0);
-    private long instance_id;
-
     PaxosInstanceSerializer serializer = new PaxosInstanceSerializer();
+    private long instance_id;
 
     public MetaService(long initIid) {
         this.instance_id = initIid;

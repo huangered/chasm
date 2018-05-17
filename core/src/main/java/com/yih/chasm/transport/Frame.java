@@ -9,13 +9,12 @@ import lombok.extern.slf4j.Slf4j;
 @Data
 public class Frame {
     public static final int MinLen = 4 + 4 + 8 + 4;
-
+    public static final FrameSerializer serializer = new FrameSerializer();
     private int version;
     private PaxosPhase phase;
     private long traceId;
     private int length;
     private ByteBuf payload;
-
 
     public Frame(int version, int verbCode, int length, ByteBuf payload, long traceId) {
         this.version = version;
@@ -24,8 +23,6 @@ public class Frame {
         this.phase = PaxosPhase.values()[verbCode];
         this.traceId = traceId;
     }
-
-    public static final FrameSerializer serializer = new FrameSerializer();
 
     @Slf4j
     public static class FrameSerializer implements IVersonSerializer<Frame> {
