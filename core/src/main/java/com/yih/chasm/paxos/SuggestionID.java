@@ -30,7 +30,7 @@ public class SuggestionID implements Comparable<SuggestionID> {
         return from_uid.compareTo(o.from_uid);
     }
 
-    static class SuggestionIdSerializer implements IVersonSerializer<SuggestionID> {
+    public static class SuggestionIdSerializer implements IVersonSerializer<SuggestionID> {
 
         @Override
         public void serialize(SuggestionID obj, ByteBuf buf) {

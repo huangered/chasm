@@ -19,4 +19,11 @@ public class PaxosInstance {
         this.id = id;
         this.value = value;
     }
+
+    public PaxosInstance(long id, String value, SuggestionID promised, SuggestionID accepted) {
+        this.id = id;
+        this.value = value;
+        this.promised = promised;
+        this.accepted = accepted;
+    }
 }

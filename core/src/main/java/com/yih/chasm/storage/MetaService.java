@@ -2,6 +2,8 @@ package com.yih.chasm.storage;
 
 import com.yih.chasm.paxos.PaxosInstance;
 import com.yih.chasm.paxos.SuggestionID;
+import com.yih.chasm.util.BufUtil;
+import io.netty.buffer.ByteBuf;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
@@ -11,10 +13,12 @@ import java.util.TreeMap;
 @Slf4j
 public class MetaService {
 
-    final static String name = "storage";
+    private final static String NAME = "storage";
     private static Map<Long, PaxosInstance> valueMap = new TreeMap<>();
     private static MetaService service = new MetaService(0);
     private long instance_id;
+
+    PaxosInstanceSerializer serializer = new PaxosInstanceSerializer();
 
     public MetaService(long initIid) {
         this.instance_id = initIid;
@@ -24,9 +28,9 @@ public class MetaService {
         return service;
     }
 
-    public static void read() {
+    public void read() {
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(name));
+            BufferedReader reader = new BufferedReader(new FileReader(NAME));
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] array = line.split(",", 2);
@@ -40,21 +44,26 @@ public class MetaService {
         }
     }
 
-    public static void write() {
+    public void write(PaxosInstance instance) {
+        FileOutputStream reader = null;
+        ByteBuf buf = BufUtil.createBuf();
         try {
-            BufferedWriter reader = new BufferedWriter(new FileWriter(name));
+            reader = new FileOutputStream(NAME);
 
-            for (Map.Entry<Long, PaxosInstance> entry : MetaService.valueMap.entrySet()) {
-                String line = entry.getKey() + "," + entry.getValue().getValue();
-                reader.write(line);
-                reader.write("\r\n");
-            }
+            serializer.serialize(instance, buf);
+            byte[] bytes = buf.array();
+            reader.write(bytes);
             reader.flush();
-            reader.close();
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                }
+            }
+            buf.release();
         }
     }
 
@@ -79,7 +88,7 @@ public class MetaService {
         return valueMap.get(instance_id);
     }
 
-    public void print(){
+    public void print() {
         log.info("=====");
         for (Map.Entry<Long, PaxosInstance> entry : valueMap.entrySet()) {
             log.info("iid {} value {} accept {}", entry.getKey(), entry.getValue().getValue(), entry.getValue().getAccepted());
