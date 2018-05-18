@@ -21,7 +21,7 @@ import java.util.Map;
 @Slf4j
 public class PaxosService {
 
-    private static EnumMap<PaxosPhase, IVersonSerializer<? super Commit>> versionSerializers = new EnumMap<PaxosPhase, IVersonSerializer<? super Commit>>(PaxosPhase.class) {
+    private static EnumMap<PaxosPhase, IVersonSerializer<?>> versionSerializers = new EnumMap<PaxosPhase, IVersonSerializer<?>>(PaxosPhase.class) {
         {
             put(PaxosPhase.PAXOS_PREPARE, Commit.serializer);
             put(PaxosPhase.PAXOS_PROPOSE, Commit.serializer);

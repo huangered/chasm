@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PaxosState {
 
-    public static PrepareResponse prepare(Commit toPrepare) {
+    public static synchronized PrepareResponse prepare(Commit toPrepare) {
 
         PaxosInstance curInst = MetaService.instance().currentInstance();
         SuggestionID promised = curInst.getPromised();
@@ -27,7 +27,7 @@ public class PaxosState {
         return pr;
     }
 
-    public static ProposeResponse propose(Commit toPropose) {
+    public static synchronized ProposeResponse propose(Commit toPropose) {
         PaxosInstance curInst = MetaService.instance().currentInstance();
         ProposeResponse pr;
         if (toPropose.getRnd().compareTo(curInst.getPromised()) >= 0) {
@@ -40,7 +40,7 @@ public class PaxosState {
         return pr;
     }
 
-    public static void learn(Commit toLearn) {
+    public static synchronized void learn(Commit toLearn) {
         PaxosInstance curInst = MetaService.instance().currentInstance();
         curInst.setValue(toLearn.getValue());
         log.debug("Cur instance {}", curInst.getValue());
