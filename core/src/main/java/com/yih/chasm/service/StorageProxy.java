@@ -51,8 +51,8 @@ public class StorageProxy {
         ProposeCallback proposeCallback = proposePaxos(commit, config.getEndPoints());
         if (proposeCallback.isSuccessful()) {
             log.info("paxos propose success");
+            learnPaxos(commit, config.getEndPoints());
         }
-        learnPaxos(commit, config.getEndPoints());
     }
 
     private PrepareCallback preparePaxos(Commit toPrepare, List<SocketAddress> endpoints) {
