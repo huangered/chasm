@@ -1,6 +1,6 @@
 package com.yih.chasm.paxos;
 
-import com.yih.chasm.storage.MetaService;
+import com.yih.chasm.storage.PaxosInstanceService;
 import com.yih.chasm.storage.StorageService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -9,7 +9,7 @@ public class PaxosState {
 
     public static synchronized PrepareResponse prepare(Commit toPrepare) {
 
-        PaxosInstance curInst = MetaService.instance().currentInstance();
+        PaxosInstance curInst = PaxosInstanceService.instance().currentInstance();
         SuggestionID promised = curInst.getPromised();
         PrepareResponse pr;
         if (toPrepare.getRnd().compareTo(promised) > 0) {
@@ -29,7 +29,7 @@ public class PaxosState {
     }
 
     public static synchronized ProposeResponse propose(Commit toPropose) {
-        PaxosInstance curInst = MetaService.instance().currentInstance();
+        PaxosInstance curInst = PaxosInstanceService.instance().currentInstance();
         ProposeResponse pr;
         if (toPropose.getRnd().compareTo(curInst.getPromised()) >= 0) {
             curInst.setAccepted(toPropose.getRnd());
@@ -43,6 +43,6 @@ public class PaxosState {
 
     public static synchronized void learn(Commit toLearn) {
         StorageService.instance().write(toLearn);
-        MetaService.instance().createInstance();
+        PaxosInstanceService.instance().createInstance();
     }
 }

@@ -1,5 +1,6 @@
 package com.yih.chasm.net.codec;
 
+import com.yih.chasm.util.ThreadManager;
 import com.yih.chasm.net.ConnectionManager;
 import com.yih.chasm.net.OutboundTcpConnection;
 import com.yih.chasm.service.PaxosService;
@@ -18,7 +19,7 @@ public class FrameDecoder extends ByteToMessageDecoder {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         OutboundTcpConnection connection = new OutboundTcpConnection(ctx.name(), ctx.channel());
-        new Thread(connection).start();
+        ThreadManager.instance().submit(connection);
         PaxosService.instance().registerChannel(ctx.channel().remoteAddress(), connection);
         super.channelActive(ctx);
     }

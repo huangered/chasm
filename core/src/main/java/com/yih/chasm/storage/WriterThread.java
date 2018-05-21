@@ -1,33 +1,72 @@
 package com.yih.chasm.storage;
 
-import com.yih.chasm.paxos.PaxosInstance;
+import com.yih.chasm.util.BufUtil;
+import io.netty.buffer.ByteBuf;
 
+import java.io.Closeable;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
-public class WriterThread implements Runnable {
+public class WriterThread implements Runnable, Closeable {
 
-    private ConcurrentLinkedDeque<PaxosInstance> queue = new ConcurrentLinkedDeque<>();
+    final String NAME = "storage";
 
-    public static void main(String[] argc) {
-        ConcurrentLinkedDeque<Integer> queue = new ConcurrentLinkedDeque<>();
-        queue.push(1);
-        queue.push(2);
-        System.out.println(queue.pop());
-        System.out.println(queue.pop());
+    private ConcurrentLinkedDeque<StorageData> queue = new ConcurrentLinkedDeque<>();
+
+    static WriterThread instance = new WriterThread();
+    FileOutputStream reader;
+
+    public static WriterThread instance() {
+        return instance;
     }
 
-    public void add(PaxosInstance instance) {
+    private WriterThread() {
+        try {
+            reader = new FileOutputStream(NAME);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void add(StorageData instance) {
         queue.push(instance);
     }
 
     @Override
     public void run() {
         while (true) {
-            if (!queue.isEmpty()) {
-                PaxosInstance instance = queue.pop();
-                MetaService.instance().write(instance);
+            StorageData commit = queue.pollFirst();
+            if (commit != null) {
+                ByteBuf buf = BufUtil.createBuf();
+                StorageData.serializer.serialize(commit, buf);
+                byte[] bytes = buf.array();
+                write(bytes);
+                buf.release();
             }
+        }
+    }
 
+    private void write(byte[] bytes) {
+        try {
+            reader.write(bytes);
+            reader.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+        }
+
+    }
+
+    @Override
+    public void close() {
+        if (reader != null) {
+            try {
+                reader.close();
+            } catch (IOException e) {
+
+            }
         }
     }
 }

@@ -2,7 +2,6 @@ package com.yih.chasm;
 
 import com.yih.chasm.config.Config;
 import com.yih.chasm.service.StorageProxy;
-import com.yih.chasm.storage.MetaService;
 import com.yih.chasm.storage.StorageService;
 
 /*
