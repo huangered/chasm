@@ -2,10 +2,12 @@ package com.yih.chasm.paxos;
 
 import com.yih.chasm.net.MessageIn;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class PrepareCallback extends AbstractPaxosCallback<PrepareResponse> {
     private boolean promised = true;
     private Commit request;

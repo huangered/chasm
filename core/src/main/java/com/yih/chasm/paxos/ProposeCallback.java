@@ -2,10 +2,12 @@ package com.yih.chasm.paxos;
 
 import com.yih.chasm.net.MessageIn;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class ProposeCallback extends AbstractPaxosCallback<ProposeResponse> {
 
     private AtomicInteger accepts = new AtomicInteger(0);
