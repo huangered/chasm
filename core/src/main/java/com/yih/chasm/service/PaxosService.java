@@ -1,10 +1,7 @@
 package com.yih.chasm.service;
 
 import com.yih.chasm.io.IVersonSerializer;
-import com.yih.chasm.net.ConnectionManager;
-import com.yih.chasm.net.IAsyncCallback;
-import com.yih.chasm.net.IVerbHandler;
-import com.yih.chasm.net.MessageOut;
+import com.yih.chasm.net.*;
 import com.yih.chasm.paxos.*;
 import com.yih.chasm.transport.Frame;
 import com.yih.chasm.util.ApiVersion;
@@ -48,7 +45,7 @@ public class PaxosService {
 
     private final Map<String, IAsyncCallback<?>> callbacks = new HashMap<>();
 
-    private final Map<SocketAddress, Channel> channels = new HashMap<>();
+    private final Map<SocketAddress, OutboundTcpConnection> channels = new HashMap<>();
 
     public static PaxosService instance() {
         return service;
@@ -78,7 +75,7 @@ public class PaxosService {
         return callbackSerializers.get(phase);
     }
 
-    public void registerChannel(SocketAddress ep, Channel channel) {
+    public void registerChannel(SocketAddress ep, OutboundTcpConnection channel) {
         channels.put(ep, channel);
     }
 
@@ -102,12 +99,8 @@ public class PaxosService {
         out.serializer.serialize(out.payload, buf);
         log.debug("send back {} {} {}", buf.readerIndex(), buf.writerIndex(), buf.readableBytes());
 
-        Channel c = channels.get(endpoint);
-        if (c == null || !c.isActive()) {
-            log.error("Channel {} error", endpoint);
-        } else {
-            c.writeAndFlush(new Frame(ApiVersion.Version.id, out.phase.id, buf.readableBytes(), buf, out.getTracingId()));
+        OutboundTcpConnection c = channels.get(endpoint);
+        c.write(new Frame(ApiVersion.Version.id, out.phase.id, buf.readableBytes(), buf, out.getTracingId()));
 
-        }
     }
 }

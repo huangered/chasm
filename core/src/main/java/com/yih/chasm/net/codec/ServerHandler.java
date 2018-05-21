@@ -16,19 +16,6 @@ import java.net.InetSocketAddress;
  */
 @Slf4j
 public class ServerHandler extends SimpleChannelInboundHandler<Frame> { // (1)
-    @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
-
-        log.info("channel active " + ctx.name() + " " + ctx.channel().remoteAddress());
-        PaxosService.instance().registerChannel(ctx.channel().remoteAddress(), ctx.channel());
-        super.channelActive(ctx);
-    }
-
-    @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        PaxosService.instance().unregisterChannel(ctx.channel().remoteAddress());
-        super.channelInactive(ctx);
-    }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Frame msg) {
