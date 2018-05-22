@@ -7,14 +7,3 @@
  */
 
 
-plugins {
-    id 'io.franzbecker.gradle-lombok' version '1.11'
-    id 'java'
-    id 'idea'
-}
-
-
-dependencies {
-    compile project(':io')
-
-}
