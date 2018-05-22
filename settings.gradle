@@ -17,7 +17,7 @@ include 'services:webservice'
 
 rootProject.name = 'chasm'
 include 'io'
-include 'core'
+include 'paxos'
 include 'site-0'
 include 'site-1'
 include 'site-2'
