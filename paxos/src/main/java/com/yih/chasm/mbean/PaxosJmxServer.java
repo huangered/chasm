@@ -3,14 +3,15 @@ package com.yih.chasm.mbean;
 import javax.management.*;
 import java.lang.management.ManagementFactory;
 
-public class Test {
-    public void test() {
+public class PaxosJmxServer {
+    public void init() {
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
 
-        Game mbean = new Game();
+        Paxos mbean = new Paxos();
         ObjectName name = null;
         try {
-            name = new ObjectName("com.yih.chasm.mbean:name=Game");
+            name = new ObjectName("com.yih.chasm.mbean:name=Paxos");
+
         } catch (MalformedObjectNameException e) {
             e.printStackTrace();
         }
