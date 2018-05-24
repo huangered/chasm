@@ -12,7 +12,7 @@ public class OutboundTcpConnection implements Runnable {
     private String name;
     private Channel channel;
     private BlockingQueue<Frame> queue = new LinkedBlockingQueue<>();
-    private boolean enable;
+    private volatile boolean enable;
 
     public OutboundTcpConnection(String name, Channel channel) {
         this.name = name;
