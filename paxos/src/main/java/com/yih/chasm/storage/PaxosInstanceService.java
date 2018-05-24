@@ -1,6 +1,5 @@
 package com.yih.chasm.storage;
 
-import com.yih.chasm.paxos.Commit;
 import com.yih.chasm.paxos.PaxosInstance;
 import com.yih.chasm.paxos.SuggestionID;
 import lombok.extern.slf4j.Slf4j;
@@ -42,11 +41,11 @@ public class PaxosInstanceService {
         return paxosInst.get(curInstanceId);
     }
 
-    public void write(PaxosInstance instance){
+    public void write(PaxosInstance instance) {
         WriterThread.instance().add(new StorageData(instance.getId(), instance.getValue()));
     }
 
-    public long curId(){
+    public long curId() {
         return curInstanceId;
     }
 

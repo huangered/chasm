@@ -7,18 +7,7 @@
  */
 
 
-plugins {
-    id 'io.franzbecker.gradle-lombok' version '1.11'
-    id 'application'
-}
-
-
-
 dependencies {
-    compile project(":paxos")
+    compile group: 'com.google.inject', name: 'guice', version: '4.2.0'
 
 }
-
-// Define the main class for the application
-mainClassName = 'com.yih.chasm.Site0'
-

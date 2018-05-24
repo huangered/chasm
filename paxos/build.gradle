@@ -9,16 +9,12 @@
 
 plugins {
     id 'io.franzbecker.gradle-lombok' version '1.11'
-    id 'application'
+    id 'java'
+    id 'idea'
 }
-
 
 
 dependencies {
-    compile project(":paxos")
+    compile project(':io')
 
 }
-
-// Define the main class for the application
-mainClassName = 'com.yih.chasm.Site0'
-

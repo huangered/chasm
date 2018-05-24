@@ -4,9 +4,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ThreadManager implements IService<Runnable> {
-    ExecutorService service = Executors.newCachedThreadPool();
-
     static ThreadManager instance = new ThreadManager();
+    ExecutorService service = Executors.newCachedThreadPool();
 
     public static ThreadManager instance() {
         return instance;

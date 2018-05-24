@@ -17,13 +17,8 @@ buildscript {
     }
 }
 
-plugins {
-    id 'idea'
-}
-
-
-
 allprojects {
+    apply plugin: "idea"
     apply plugin: "java"
     apply plugin: "com.jfrog.artifactory"
     apply plugin: "maven-publish"
