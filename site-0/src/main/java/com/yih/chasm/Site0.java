@@ -27,7 +27,7 @@ public class Site0 {
         Thread.sleep(5000);
         for (int i = 0; i < 10; i++) {
             sp.beginPaxos(i, "abcdefghijklmnoperestuvwxya" +i, "adfklsajfkskf" + i);
-            Thread.sleep(1000);
+//            Thread.sleep(1000);
         }
         StorageService.instance().debugPrint();
 

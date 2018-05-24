@@ -20,4 +20,9 @@ public class DataWriter implements WriterOutput {
         channel.write(bb);
 
     }
+
+    @Override
+    public void close() {
+
+    }
 }

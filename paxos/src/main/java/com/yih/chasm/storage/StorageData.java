@@ -1,38 +1,60 @@
 package com.yih.chasm.storage;
 
-import com.yih.chasm.io.IVersonSerializer;
-import com.yih.chasm.io.StringSerializer;
-import io.netty.buffer.ByteBuf;
+import com.yih.chasm.io.ISerializer;
 import lombok.Data;
+import lombok.ToString;
+
+import java.nio.ByteBuffer;
 
 @Data
+@ToString
 public class StorageData {
+    public static ISerializer<StorageData> serializer = new StorageDataSerializer();
     private long id;
+    private long timestamp;
     private String value;
 
-    public static IVersonSerializer<StorageData> serializer = new StorageDataSerializer();
-
-    public StorageData(){}
+    public StorageData() {
+    }
 
     public StorageData(long id, String value) {
         this.id = id;
         this.value = value;
     }
 
-    public static class StorageDataSerializer implements IVersonSerializer<StorageData> {
+    public static void main(String[] argc) {
+        StorageData dat = new StorageData(1, "test");
+        dat.timestamp = 2;
+
+        byte[] b = StorageData.serializer.serialize(dat);
+        StorageData dat2 = StorageData.serializer.deserialize(b);
+        System.out.println(dat2);
+    }
+
+    public static class StorageDataSerializer implements ISerializer<StorageData> {
+
 
         @Override
-        public void serialize(StorageData obj, ByteBuf buf) {
-            buf.writeLong(obj.id);
-            StringSerializer.serializer.serialize(obj.value, buf);
+        public byte[] serialize(StorageData obj) {
+            ByteBuffer buffer = ByteBuffer.allocate(1024);
+            buffer.putLong(obj.id);
+            buffer.putLong(obj.timestamp);
+            buffer.putInt(obj.value.length());
+            buffer.put(obj.value.getBytes());
+            return buffer.array();
         }
 
         @Override
-        public StorageData deserialize(ByteBuf buf) {
-            StorageData data = new StorageData();
-            data.id = buf.readLong();
-            data.value = StringSerializer.serializer.deserialize(buf);
-            return data;
+        public StorageData deserialize(byte[] data) {
+            ByteBuffer buffer = ByteBuffer.wrap(data);
+            StorageData dat = new StorageData();
+            dat.id = buffer.getLong();
+            dat.timestamp = buffer.getLong();
+            int len = buffer.getInt();
+            byte[] dst = new byte[len];
+            buffer.get(dst, 0, len);
+            dat.value = new String(dst);
+            return dat;
         }
     }
 }
