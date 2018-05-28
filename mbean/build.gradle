@@ -15,7 +15,5 @@ plugins {
 
 
 dependencies {
-    compile project(':io')
-    compile project(':mbean')
 
 }
