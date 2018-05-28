@@ -20,7 +20,7 @@ public class Frame {
         this.version = version;
         this.length = length;
         this.payload = payload;
-        this.phase = PaxosPhase.values()[verbCode];
+        this.phase = PaxosPhase.get(verbCode);
         this.traceId = traceId;
     }
 
